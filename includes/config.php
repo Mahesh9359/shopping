@@ -1,5 +1,5 @@
 <?php
-define('DB_SERVER', '127.0.0.1');
+define('DB_SERVER', '127.0.0.1'); // Use IP address instead of 'localhost'
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'shopping');
@@ -11,6 +11,7 @@ if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
     exit();
 }
+
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = md5($_POST['password']); // Hash the password
@@ -19,9 +20,8 @@ if (isset($_POST['login'])) {
     $stmt->bind_param("ss", $username, $password);
     $stmt->execute();
     $result = $stmt->get_result();
-    $num = $result->fetch_array();
 
-    if ($num > 0) {
+    if ($result->num_rows > 0) {
         // Successful login logic
         $_SESSION['admin_login'] = $username;
         header("location: admin_dashboard.php"); // Redirect to the admin dashboard
@@ -31,5 +31,4 @@ if (isset($_POST['login'])) {
     }
 }
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-
 ?>
