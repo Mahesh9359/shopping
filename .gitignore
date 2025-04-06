@@ -1,0 +1,36 @@
+# Ignore node_modules if any frontend tools are used
+node_modules/
+
+# Ignore vendor if you're using Composer
+/vendor/
+
+# Ignore environment config files
+.env
+.env.local
+.env.*
+
+# Ignore log files
+*.log
+
+# Ignore IDE/editor folders
+.vscode/
+.idea/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore database dumps if you don't want to track them
+*.sql
+
+# Ignore compiled assets or caches
+*.cache
+*.class
+*.pyc
+*.swp
+
+# Ignore composer lock if you want (optional)
+composer.lock
+
+# Ignore file uploads (if stored locally)
+uploads/
