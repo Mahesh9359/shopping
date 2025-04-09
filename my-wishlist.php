@@ -49,31 +49,31 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
     <title>My Wishlist</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/green.css">
-    <link rel="stylesheet" href="assets/css/owl.carousel.css">
-    <link rel="stylesheet" href="assets/css/owl.transitions.css">
-    <link href="assets/css/lightbox.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/animate.min.css">
-    <link rel="stylesheet" href="assets/css/rateit.css">
-    <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/green.css">
+    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="/assets/css/owl.transitions.css">
+    <link href="/assets/css/lightbox.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/animate.min.css">
+    <link rel="stylesheet" href="/assets/css/rateit.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
 </head>
 <body class="cnt-home">
     <header class="header-style-1">
-        <?php include('includes/top-header.php');?>
-        <?php include('includes/main-header.php');?>
-        <?php include('includes/menu-bar.php');?>
+        <?php include('/includes/top-header.php');?>
+        <?php include('/includes/main-header.php');?>
+        <?php include('/includes/menu-bar.php');?>
     </header>
 
     <div class="breadcrumb">
         <div class="container">
             <div class="breadcrumb-inner">
                 <ul class="list-inline list-unstyled">
-                    <li><a href="index.php">Home</a></li>
+                    <li><a href="/index.php">Home</a></li>
                     <li class='active'>Wishlist</li>
                 </ul>
             </div>
@@ -107,11 +107,11 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                                     <tr>
                                         <td class="col-md-2">
                                             <img src="admin/productimages/<?php echo htmlentities($row['pid']);?>/<?php echo htmlentities($row['pimage']);?>" 
-                                                alt="<?php echo htmlentities($row['pname']);?>" width 60" height 100">
+                                                alt="<?php echo htmlentities($row['pname']);?>" width="60" height="100">
                                         </td>
                                         <td class="col-md-6">
                                             <div class="product-name">
-                                                <a href="product-details.php?pid=<?php echo htmlentities($row['pid']);?>">
+                                                <a href="/product-details.php?pid=<?php echo htmlentities($row['pid']);?>">
                                                     <?php echo htmlentities($row['pname']);?>
                                                 </a>
                                             </div>
@@ -134,11 +134,11 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                                             </div>
                                         </td>
                                         <td class="col-md-2">
-                                            <a href="my-wishlist.php?action=add&id=<?php echo $row['pid']; ?>" 
+                                            <a href="/my-wishlist.php?action=add&id=<?php echo $row['pid']; ?>" 
                                                class="btn-upper btn btn-primary">Add to cart</a>
                                         </td>
                                         <td class="col-md-2 close-btn">
-                                            <a href="my-wishlist.php?del=<?php echo htmlentities($row['wid']);?>" 
+                                            <a href="/my-wishlist.php?del=<?php echo htmlentities($row['wid']);?>" 
                                                onClick="return confirm('Are you sure you  want to delete?')" 
                                                class=""><i class="fa fa-times"></i></a>
                                         </td>
@@ -159,24 +159,24 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                     </div>
                 </div>
             </div>
-            <?php include('includes/brands-slider.php');?>
+            <?php include('/includes/brands-slider.php');?>
         </div>
     </div>
 
-    <?php include('includes/footer.php');?>
+    <?php include('/includes/footer.php');?>
 
     <!-- JavaScript -->
-    <script src="assets/js/jquery-1.11.1.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <script src="assets/js/echo.min.js"></script>
-    <script src="assets/js/jquery.easing-1.3.min.js"></script>
-    <script src="assets/js/bootstrap-slider.min.js"></script>
-    <script src="assets/js/jquery.rateit.min.js"></script>
-    <script src="assets/js/lightbox.min.js"></script>
-    <script src="assets/js/bootstrap-select.min.js"></script>
-    <script src="assets/js/wow.min.js"></script>
-    <script src="assets/js/scripts.js"></script>
+    <script src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="/assets/js/echo.min.js"></script>
+    <script src="/assets/js/jquery.easing-1.3.min.js"></script>
+    <script src="/assets/js/bootstrap-slider.min.js"></script>
+    <script src="/assets/js/jquery.rateit.min.js"></script>
+    <script src="/assets/js/lightbox.min.js"></script>
+    <script src="/assets/js/bootstrap-select.min.js"></script>
+    <script src="/assets/js/wow.min.js"></script>
+    <script src="/assets/js/scripts.js"></script>
 </body>
 </html>

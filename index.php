@@ -11,11 +11,11 @@ if (!isset($_SESSION['cart'])) {
 }
 
 // Include config and header/menu files
-include('includes/config.php');
-include('includes/top-header.php');
-include('includes/main-header.php');
-include('includes/menu-bar.php');
-include('includes/side-menu.php');
+include('/includes/config.php');
+include('/includes/top-header.php');
+include('/includes/main-header.php');
+include('/includes/menu-bar.php');
+include('/includes/side-menu.php');
 
 // Debug checkpoint
 echo "<!-- Checkpoint: includes loaded -->";
@@ -56,13 +56,13 @@ if (isset($_GET['action']) && $_GET['action'] === "add") {
                     ?>
                     <div class="col-md-4">
                         <div class="card" style="margin-bottom: 20px;">
-                            <img src="admin/productimages/<?php echo htmlentities($row['id']); ?>/<?php echo htmlentities($row['productImage1']); ?>"
+                            <img src="/admin/productimages/<?php echo htmlentities($row['id']); ?>/<?php echo htmlentities($row['productImage1']); ?>"
                                  alt="<?php echo htmlentities($row['productName']); ?>"
                                  style="width: 100%; height: 200px; object-fit: cover;">
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlentities($row['productName']); ?></h5>
                                 <p class="card-text">Price: ₹<?php echo htmlentities($row['productPrice']); ?></p>
-                                <a href="index.php?page=product&action=add&id=<?php echo htmlentities($row['id']); ?>"
+                                <a href="/index.php?page=product&action=add&id=<?php echo htmlentities($row['id']); ?>"
                                    class="btn btn-primary">Add to Cart</a>
                             </div>
                         </div>
@@ -75,4 +75,4 @@ if (isset($_GET['action']) && $_GET['action'] === "add") {
     </div>
 </div>
 
-<?php include('includes/footer.php'); ?>
+<?php include('/includes/footer.php'); ?>

@@ -84,11 +84,11 @@ echo "<script>alert('Shipping Address has been updated');</script>";
 <header class="header-style-1">
 
 	<!-- ============================================== TOP MENU ============================================== -->
-<?php include('includes/top-header.php');?>
+<?php include('/includes/top-header.php');?>
 <!-- ============================================== TOP MENU : END ============================================== -->
-<?php include('includes/main-header.php');?>
+<?php include('/includes/main-header.php');?>
 	<!-- ============================================== NAVBAR ============================================== -->
-<?php include('includes/menu-bar.php');?>
+<?php include('/includes/menu-bar.php');?>
 <!-- ============================================== NAVBAR : END ============================================== -->
 
 </header>
@@ -97,7 +97,7 @@ echo "<script>alert('Shipping Address has been updated');</script>";
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="#">Home</a></li>
+				<li><a href="/">Home</a></li>
 				<li class='active'>Checkout</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
