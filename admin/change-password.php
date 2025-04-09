@@ -149,4 +149,3 @@ if (isset($_POST['submit'])) {
 		<script src="/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 		<script src="/scripts/flot/jquery.flot.js" type="text/javascript"></script>
 	</body>
-	<?php } ?>
