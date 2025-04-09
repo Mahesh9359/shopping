@@ -27,7 +27,7 @@ if(isset($_POST['login'])) {
 <head>
     <meta charset="utf-8">
     <title>Admin Login</title>
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet"> <!-- Fixed -->
 </head>
 <body>
     <div class="container">
