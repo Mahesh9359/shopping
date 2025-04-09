@@ -9,7 +9,7 @@ session_start(); // Ensure session is started
                 <ul class="list-unstyled">
 
                 <?php if (isset($_SESSION['login']) && strlen($_SESSION['login']) > 0) { ?>
-                    <li><a href="#"><i class="icon fa fa-user"></i>Welcome - <?php echo htmlentities($_SESSION['username']); ?></a></li>
+                    <li><a href="/"><i class="icon fa fa-user"></i>Welcome - <?php echo htmlentities($_SESSION['username']); ?></a></li>
                 <?php } ?>
 
                 <li><a href="my-account.php"><i class="icon fa fa-user"></i>My Account</a></li>
@@ -28,7 +28,7 @@ session_start(); // Ensure session is started
                 <ul class="list-unstyled list-inline">
                     <li class="dropdown dropdown-small">
                         <a href="track-orders.php" class="dropdown-toggle"><span class="key">Track Order</span></a>
-                        <a href="http://localhost/Online-Grocery-Store/Online-Grocery-Shopping-master/shopping/admin/">Admin Login</a>
+                        <a href="/admin">Admin Login</a>
                     </li>
                 </ul>
             </div>

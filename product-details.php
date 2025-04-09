@@ -93,8 +93,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit']) && $pid > 0){
     <div class="container">
         <div class="breadcrumb-inner">
             <?php
-            $ret=mysqli_query($con,"select category.categoryName as catname,subCategory.subcategory as subcatname,products.productName as pname from products join category on category.id=products.category join subcategory on subcategory.id=products.subCategory where products.id='$pid'");
-            while ($rw=mysqli_fetch_array($ret)) {
+$ret = mysqli_query($con, "
+SELECT category.categoryName AS catname,
+       subcategory.subcategory AS subcatname,
+       products.productName AS pname
+FROM products
+JOIN category ON category.id = products.category
+JOIN subcategory ON subcategory.id = products.subCategory
+WHERE products.id='$pid'
+");
+        while ($rw=mysqli_fetch_array($ret)) {
             ?>
             <ul class="list-inline list-unstyled">
                 <li><a href="/index.php">Home</a></li>

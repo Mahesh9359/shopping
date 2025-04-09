@@ -51,7 +51,7 @@ exit();
 					<i class="icon-reorder shaded"></i>
 				</a>
 
-			  	<a class="brand" href="/index.html">
+			  	<a class="brand" href="/">
 			  		Online Grocery Shop  | Admin Login | Authorized user only ⚠️
 			  	</a>
 
@@ -59,7 +59,7 @@ exit();
 				
 					<ul class="nav pull-right">
 
-						<li><a href="http://localhost/Online-Grocery-Store/Online-Grocery-Shopping-master/shopping/">
+						<li><a href="/index.php">
 						❎
 						
 						</a></li>

@@ -2,8 +2,13 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-$cid = intval($_GET['cid']);
 
+if (isset($_GET['cid'])) {
+    $cid = $_GET['cid'];
+} else {
+    echo "Category ID not specified.";
+    exit();
+}
 // Add to cart functionality
 if(isset($_GET['action']) && $_GET['action'] == "add") {
     $id = intval($_GET['id']);
