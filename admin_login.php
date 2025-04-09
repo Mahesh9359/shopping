@@ -13,7 +13,7 @@ if (isset($_POST['login'])) {
 
     if ($num > 0) {
         $_SESSION['admin_login'] = $username;
-        header("location: admin_dashboard.php");
+        header("location: /admin");
         exit();
     } else {
         $_SESSION['errmsg'] = "Invalid username or password";
