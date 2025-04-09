@@ -14,14 +14,14 @@ if(strlen($_SESSION['alogin'])==0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Delivered Orders</title>
     
-    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.min.css">
-    <link rel="stylesheet" href="/css/theme.css">
-    <link rel="stylesheet" href="/images/icons/css/font-awesome.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="images/icons/css/font-awesome.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
     <style>
