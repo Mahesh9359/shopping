@@ -263,7 +263,7 @@ while($row=mysqli_fetch_array($query))
 
 	<!-- For demo purposes – can be removed on production -->
 	
-	<script src="/switchstylesheet/switchstylesheet.js"></script>
+	<script src="switchstylesheet/switchstylesheet.js"></script>
 	
 	<script>
 		$(document).ready(function(){ 

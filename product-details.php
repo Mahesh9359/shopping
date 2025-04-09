@@ -349,7 +349,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit']) && $pid > 0){
                                 <span class="social-label">Share :</span>
                                 <div class="social-icons">
                                     <ul class="list-inline">
-                                        <li><a class="fa fa-facebook" href="/http://facebook.com/transvelo"></a></li>
+                                        <li><a class="fa fa-facebook" href="http://facebook.com/transvelo"></a></li>
                                         <li><a class="fa fa-twitter" href="/#"></a></li>
                                         <li><a class="fa fa-linkedin" href="/#"></a></li>
                                         <li><a class="fa fa-rss" href="/#"></a></li>

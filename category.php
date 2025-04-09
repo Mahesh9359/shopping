@@ -50,7 +50,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
     <title>Product Category</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="//assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/green.css">
     <link rel="stylesheet" href="/assets/css/owl.carousel.css">

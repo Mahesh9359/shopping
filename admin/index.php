@@ -59,7 +59,7 @@ exit();
 				
 					<ul class="nav pull-right">
 
-						<li><a href="/http://localhost/Online-Grocery-Store/Online-Grocery-Shopping-master/shopping/">
+						<li><a href="http://localhost/Online-Grocery-Store/Online-Grocery-Shopping-master/shopping/">
 						❎
 						
 						</a></li>

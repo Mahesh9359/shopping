@@ -233,7 +233,7 @@ while($row=mysqli_fetch_array($query))
 </div>
 </div>
 <?php include('includes/footer.php');?>
-	<script src="//assets/js/jquery-1.11.1.min.js"></script>
+	<script src="/assets/js/jquery-1.11.1.min.js"></script>
 	
 	<script src="/assets/js/bootstrap.min.js"></script>
 	
@@ -251,7 +251,7 @@ while($row=mysqli_fetch_array($query))
 
 	<!-- For demo purposes – can be removed on production -->
 	
-	<script src="/switchstylesheet/switchstylesheet.js"></script>
+	<script src="switchstylesheet/switchstylesheet.js"></script>
 	
 	<script>
 		$(document).ready(function(){ 
