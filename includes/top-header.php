@@ -28,7 +28,7 @@ session_start(); // Ensure session is started
                 <ul class="list-unstyled list-inline">
                     <li class="dropdown dropdown-small">
                         <a href="track-orders.php" class="dropdown-toggle"><span class="key">Track Order</span></a>
-                        <a href="/admin">Admin Login</a>
+                        <a href="../admin_login.php">Admin Login</a>
                     </li>
                 </ul>
             </div>
