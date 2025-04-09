@@ -1,31 +1,34 @@
+<?php
+// 🚫 Do not leave any blank line before this
 
-	<?php
-	session_start();
-	include('include/config.php');
-	if(strlen($_SESSION['alogin'])==0)
-		{	
-	header('location:index.php');
-	}
-	else{
-	date_default_timezone_set('Asia/Kolkata');// change according timezone
-	$currentTime = date( 'd-m-Y h:i:s A', time () );
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+include('include/config.php');
 
-	if(isset($_POST['submit']))
-	{
-	$sql=mysqli_query($con,"SELECT password FROM  admin where password='".md5($_POST['password'])."' && username='".$_SESSION['alogin']."'");
-	$num=mysqli_fetch_array($sql);
-	if($num>0)
-	{
-	$con=mysqli_query($con,"update admin set password='".md5($_POST['newpassword'])."', updationDate='$currentTime' where username='".$_SESSION['alogin']."'");
-	$_SESSION['msg']="Password Changed Successfully !!";
-	}
-	else
-	{
-	$_SESSION['msg']="Old Password not match !!";
-	}
-	}
-	?>
+// Safe session check before using it
+if (!isset($_SESSION['alogin']) || strlen($_SESSION['alogin']) == 0) {
+    header('location:index.php');
+    exit();
+}
+
+date_default_timezone_set('Asia/Kolkata');
+$currentTime = date('d-m-Y h:i:s A', time());
+
+if (isset($_POST['submit'])) {
+    $sql = mysqli_query($con, "SELECT password FROM admin WHERE password='" . md5($_POST['password']) . "' AND username='" . $_SESSION['alogin'] . "'");
+    $num = mysqli_fetch_array($sql);
+
+    if ($num > 0) {
+        mysqli_query($con, "UPDATE admin SET password='" . md5($_POST['newpassword']) . "', updationDate='$currentTime' WHERE username='" . $_SESSION['alogin'] . "'");
+        $_SESSION['msg'] = "Password Changed Successfully !!";
+    } else {
+        $_SESSION['msg'] = "Old Password not match !!";
+    }
+}
+?>
+
 	<!DOCTYPE html>
 	<html lang="en">
 	<head>

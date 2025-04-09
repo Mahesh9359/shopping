@@ -51,7 +51,7 @@ exit();
 					<i class="icon-reorder shaded"></i>
 				</a>
 
-			  	<a class="brand" href="/">
+			  	<a class="brand" href="/admin">
 			  		Online Grocery Shop  | Admin Login | Authorized user only ⚠️
 			  	</a>
 
