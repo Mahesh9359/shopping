@@ -11,11 +11,11 @@ if (!isset($_SESSION['cart'])) {
 }
 
 // Include config and header/menu files
-include('/includes/config.php');
-include('/includes/top-header.php');
-include('/includes/main-header.php');
-include('/includes/menu-bar.php');
-include('/includes/side-menu.php');
+include('includes/config.php');
+include('includes/top-header.php');
+include('includes/main-header.php');
+include('includes/menu-bar.php');
+include('includes/side-menu.php');
 
 // Debug checkpoint
 echo "<!-- Checkpoint: includes loaded -->";
@@ -75,4 +75,4 @@ if (isset($_GET['action']) && $_GET['action'] === "add") {
     </div>
 </div>
 
-<?php include('/includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>

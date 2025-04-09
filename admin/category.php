@@ -33,10 +33,10 @@ if(isset($_GET['del']))
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Admin| Category</title>
-	<link type="text/css" href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link type="text/css" href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-	<link type="text/css" href="css/theme.css" rel="stylesheet">
-	<link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
+	<link type="text/css" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link type="text/css" href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+	<link type="text/css" href="/css/theme.css" rel="stylesheet">
+	<link type="text/css" href="/images/icons/css/font-awesome.css" rel="stylesheet">
 	<link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'>
 </head>
 <body>
@@ -131,8 +131,8 @@ while($row=mysqli_fetch_array($query))
 											<td> <?php echo htmlentities($row['creationDate']);?></td>
 											<td><?php echo htmlentities($row['updationDate']);?></td>
 											<td>
-											<a href="edit-category.php?id=<?php echo $row['id']?>" ><i class="icon-edit"></i></a>
-											<a href="category.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a></td>
+											<a href="/edit-category.php?id=<?php echo $row['id']?>" ><i class="icon-edit"></i></a>
+											<a href="/category.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a></td>
 										</tr>
 										<?php $cnt=$cnt+1; } ?>
 										
@@ -150,11 +150,11 @@ while($row=mysqli_fetch_array($query))
 
 <?php include('include/footer.php');?>
 
-	<script src="scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
-	<script src="scripts/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
-	<script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-	<script src="scripts/flot/jquery.flot.js" type="text/javascript"></script>
-	<script src="scripts/datatables/jquery.dataTables.js"></script>
+	<script src="/scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+	<script src="/scripts/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+	<script src="/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	<script src="/scripts/flot/jquery.flot.js" type="text/javascript"></script>
+	<script src="/scripts/datatables/jquery.dataTables.js"></script>
 	<script>
 		$(document).ready(function() {
 			$('.datatable-1').dataTable();

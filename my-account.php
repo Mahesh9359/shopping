@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(0);
-include('/includes/config.php');
+include('includes/config.php');
 if(strlen($_SESSION['login'])==0)
     {   
 header('/location:login.php');
@@ -114,11 +114,11 @@ return true;
 <header class="header-style-1">
 
 	<!-- ============================================== TOP MENU ============================================== -->
-<?php include('/includes/top-header.php');?>
+<?php include('includes/top-header.php');?>
 <!-- ============================================== TOP MENU : END ============================================== -->
-<?php include('/includes/main-header.php');?>
+<?php include('includes/main-header.php');?>
 	<!-- ============================================== NAVBAR ============================================== -->
-<?php include('/includes/menu-bar.php');?>
+<?php include('includes/menu-bar.php');?>
 <!-- ============================================== NAVBAR : END ============================================== -->
 
 </header>
@@ -237,14 +237,14 @@ while($row=mysqli_fetch_array($query))
 					  	
 					</div><!-- /.checkout-steps -->
 				</div>
-			<?php include('/includes/myaccount-sidebar.php');?>
+			<?php include('includes/myaccount-sidebar.php');?>
 			</div><!-- /.row -->
 		</div><!-- /.checkout-box -->
-	<?php include('/includes/brands-slider.php');?>
+	<?php include('includes/brands-slider.php');?>
 
 </div>
 </div>
-<?php include('/includes/footer.php');?>
+<?php include('includes/footer.php');?>
 	<script src="/assets/js/jquery-1.11.1.min.js"></script>
 	
 	<script src="/assets/js/bootstrap.min.js"></script>

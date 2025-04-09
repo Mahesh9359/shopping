@@ -20,27 +20,27 @@ if(strlen($_SESSION['login'])==0) {
         <meta name="robots" content="all">
 
         <title>Order History</title>
-        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/css/main.css">
-        <link rel="stylesheet" href="assets/css/green.css">
-        <link rel="stylesheet" href="assets/css/owl.carousel.css">
-        <link rel="stylesheet" href="assets/css/owl.transitions.css">
-        <link href="assets/css/lightbox.css" rel="stylesheet">
-        <link rel="stylesheet" href="assets/css/animate.min.css">
-        <link rel="stylesheet" href="assets/css/rateit.css">
-        <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+        <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/assets/css/main.css">
+        <link rel="stylesheet" href="/assets/css/green.css">
+        <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+        <link rel="stylesheet" href="/assets/css/owl.transitions.css">
+        <link href="/assets/css/lightbox.css" rel="stylesheet">
+        <link rel="stylesheet" href="/assets/css/animate.min.css">
+        <link rel="stylesheet" href="/assets/css/rateit.css">
+        <link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
 
         <!-- Demo Purpose Only. Should be removed in production -->
-        <link rel="stylesheet" href="assets/css/config.css">
+        <link rel="stylesheet" href="/assets/css/config.css">
 
-        <link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
-        <link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-        <link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
-        <link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-        <link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
-        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+        <link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
+        <link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+        <link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
+        <link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+        <link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+        <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
         <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <link rel="shortcut icon" href="/assets/images/favicon.ico">
         
         <script language="javascript" type="text/javascript">
         function openOrderTracking(URLStr) {
@@ -61,7 +61,7 @@ if(strlen($_SESSION['login'])==0) {
             <div class="container">
                 <div class="breadcrumb-inner">
                     <ul class="list-inline list-unstyled">
-                        <li><a href="index.php">Home</a></li>
+                        <li><a href="/index.php">Home</a></li>
                         <li class='active'>Shopping Cart</li>
                     </ul>
                 </div>
@@ -99,12 +99,12 @@ if(strlen($_SESSION['login'])==0) {
                                             <tr>
                                                 <td><?php echo htmlspecialchars($cnt);?></td>
                                                 <td class="cart-image">
-                                                    <a class="entry-thumbnail" href="detail.html">
-                                                        <img src="admin/productimages/<?php echo htmlspecialchars($row['proid']);?>/<?php echo htmlspecialchars($row['pimg1']);?>" alt="" width="84" height="146">
+                                                    <a class="entry-thumbnail" href="/detail.html">
+                                                        <img src="/admin/productimages/<?php echo htmlspecialchars($row['proid']);?>/<?php echo htmlspecialchars($row['pimg1']);?>" alt="" width="84" height="146">
                                                     </a>
                                                 </td>
                                                 <td class="cart-product-name-info">
-                                                    <h4 class='cart-product-description'><a href="product-details.php?pid=<?php echo htmlspecialchars($row['opid']);?>">
+                                                    <h4 class='cart-product-description'><a href="/product-details.php?pid=<?php echo htmlspecialchars($row['opid']);?>">
                                                     <?php echo htmlspecialchars($row['pname']);?></a></h4>
                                                 </td>
                                                 <td class="cart-product-quantity">
@@ -116,7 +116,7 @@ if(strlen($_SESSION['login'])==0) {
                                                 <td class="cart-product-sub-total"><?php echo htmlspecialchars($row['paym']); ?>  </td>
                                                 <td class="cart-product-sub-total"><?php echo htmlspecialchars($row['odate']); ?>  </td>
                                                 <td>
-                                                    <a href="javascript:void(0);" onClick="openOrderTracking('track-order.php?oid=<?php echo htmlentities($row['orderid']);?>');" title="Track order">
+                                                    <a href="/javascript:void(0);" onClick="openOrderTracking('track-order.php?oid=<?php echo htmlentities($row['orderid']);?>');" title="Track order">
                                                         Track
                                                     </a>
                                                 </td>
@@ -140,18 +140,18 @@ if(strlen($_SESSION['login'])==0) {
         
         <?php include('includes/footer.php');?>
 
-        <script src="assets/js/jquery-1.11.1.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-        <script src="assets/js/owl.carousel.min.js"></script>
-        <script src="assets/js/echo.min.js"></script>
-        <script src="assets/js/jquery.easing-1.3.min.js"></script>
-        <script src="assets/js/bootstrap-slider.min.js"></script>
-        <script src="assets/js/jquery.rateit.min.js"></script>
-        <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
-        <script src="assets/js/bootstrap-select.min.js"></script>
-        <script src="assets/js/wow.min.js"></script>
-        <script src="assets/js/scripts.js"></script>
+        <script src="/assets/js/jquery-1.11.1.min.js"></script>
+        <script src="/assets/js/bootstrap.min.js"></script>
+        <script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+        <script src="/assets/js/owl.carousel.min.js"></script>
+        <script src="/assets/js/echo.min.js"></script>
+        <script src="/assets/js/jquery.easing-1.3.min.js"></script>
+        <script src="/assets/js/bootstrap-slider.min.js"></script>
+        <script src="/assets/js/jquery.rateit.min.js"></script>
+        <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
+        <script src="/assets/js/bootstrap-select.min.js"></script>
+        <script src="/assets/js/wow.min.js"></script>
+        <script src="/assets/js/scripts.js"></script>
 
         <!-- For demo purposes – can be removed on production -->
         <script src="switchstylesheet/switchstylesheet.js"></script>

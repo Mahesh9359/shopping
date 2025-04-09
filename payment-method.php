@@ -28,25 +28,25 @@ else{
 	    <meta name="robots" content="all">
 
 	    <title>Shopping Portal | Payment Method</title>
-	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	    <link rel="stylesheet" href="assets/css/main.css">
-	    <link rel="stylesheet" href="assets/css/green.css">
-	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="assets/css/owl.transitions.css">
-		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
-		<link href="assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="assets/css/animate.min.css">
-		<link rel="stylesheet" href="assets/css/rateit.css">
-		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
-		<link rel="stylesheet" href="assets/css/config.css">
-		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
-		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="/assets/css/main.css">
+	    <link rel="stylesheet" href="/assets/css/green.css">
+	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
+		<!--<link rel="stylesheet" href="/assets/css/owl.theme.css">-->
+		<link href="/assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="/assets/css/animate.min.css">
+		<link rel="stylesheet" href="/assets/css/rateit.css">
+		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+		<link rel="stylesheet" href="/assets/css/config.css">
+		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-		<link rel="shortcut icon" href="assets/images/favicon.ico">
+		<link rel="shortcut icon" href="/assets/images/favicon.ico">
 	</head>
     <body class="cnt-home">
 	
@@ -60,7 +60,7 @@ else{
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="home.html">Home</a></li>
+				<li><a href="/home.html">Home</a></li>
 				<li class='active'>Payment Method</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -80,7 +80,7 @@ else{
 	<!-- panel-heading -->
 		<div class="panel-heading">
     	<h4 class="unicase-checkout-title">
-	        <a data-toggle="collapse" class="" data-parent="#accordion" href="#collapseOne">
+	        <a data-toggle="collapse" class="" data-parent="#accordion" href="/#collapseOne">
 	         Select your Payment Method
 	        </a>
 	     </h4>
@@ -117,21 +117,21 @@ else{
 <!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
 </div><!-- /.body-content -->
 <?php include('includes/footer.php');?>
-	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="/assets/js/jquery-1.11.1.min.js"></script>
 	
-	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="/assets/js/bootstrap.min.js"></script>
 	
-	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="assets/js/owl.carousel.min.js"></script>
+	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="/assets/js/owl.carousel.min.js"></script>
 	
-	<script src="assets/js/echo.min.js"></script>
-	<script src="assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="assets/js/bootstrap-slider.min.js"></script>
-    <script src="assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
-    <script src="assets/js/bootstrap-select.min.js"></script>
-    <script src="assets/js/wow.min.js"></script>
-	<script src="assets/js/scripts.js"></script>
+	<script src="/assets/js/echo.min.js"></script>
+	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="/assets/js/bootstrap-slider.min.js"></script>
+    <script src="/assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
+    <script src="/assets/js/bootstrap-select.min.js"></script>
+    <script src="/assets/js/wow.min.js"></script>
+	<script src="/assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	

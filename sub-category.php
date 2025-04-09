@@ -50,43 +50,43 @@ header('location:my-wishlist.php');
 	    <title>Product Category</title>
 
 	    <!-- Bootstrap Core CSS -->
-	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
 	    
 	    <!-- Customizable CSS -->
-	    <link rel="stylesheet" href="assets/css/main.css">
-	    <link rel="stylesheet" href="assets/css/green.css">
-	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="assets/css/owl.transitions.css">
-		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
-		<link href="assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="assets/css/animate.min.css">
-		<link rel="stylesheet" href="assets/css/rateit.css">
-		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+	    <link rel="stylesheet" href="/assets/css/main.css">
+	    <link rel="stylesheet" href="/assets/css/green.css">
+	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
+		<!--<link rel="stylesheet" href="/assets/css/owl.theme.css">-->
+		<link href="/assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="/assets/css/animate.min.css">
+		<link rel="stylesheet" href="/assets/css/rateit.css">
+		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
 
 		<!-- Demo Purpose Only. Should be removed in production -->
-		<link rel="stylesheet" href="assets/css/config.css">
+		<link rel="stylesheet" href="/assets/css/config.css">
 
-		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
 		<!-- Demo Purpose Only. Should be removed in production : END -->
 
 		
 		<!-- Icons/Glyphs -->
-		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
 
         <!-- Fonts --> 
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 		
 		<!-- Favicon -->
-		<link rel="shortcut icon" href="assets/images/favicon.ico">
+		<link rel="shortcut icon" href="/assets/images/favicon.ico">
 
 		<!-- HTML5 elements and media queries Support for IE8 : HTML5 shim and Respond.js -->
 		<!--[if lt IE 9]>
-			<script src="assets/js/html5shiv.js"></script>
-			<script src="assets/js/respond.min.js"></script>
+			<script src="/assets/js/html5shiv.js"></script>
+			<script src="/assets/js/respond.min.js"></script>
 		<![endif]-->
 
 	</head>
@@ -126,7 +126,7 @@ while($row=mysqli_fetch_array($sql))
 		<div class="accordion">
 	    	<div class="accordion-group">
 	            <div class="accordion-heading">
-	                <a href="category.php?cid=<?php echo $row['id'];?>"  class="accordion-toggle collapsed">
+	                <a href="/category.php?cid=<?php echo $row['id'];?>"  class="accordion-toggle collapsed">
 	                   <?php echo $row['categoryName'];?>
 	                </a>
 	            </div>  
@@ -150,7 +150,7 @@ while($row=mysqli_fetch_array($sql))
 	<div id="category" class="category-carousel hidden-xs">
 		<div class="item">	
 			<div class="image">
-				<img src="https://image.freepik.com/free-vector/vegetables-banner-collection_1268-12420.jpg" alt="" class="img-responsive">
+				<img src="/https://image.freepik.com/free-vector/vegetables-banner-collection_1268-12420.jpg" alt="" class="img-responsive">
 			</div>
 			<div class="container-fluid">
 				<div class="caption vertical-top text-left">
@@ -190,13 +190,13 @@ while ($row=mysqli_fetch_array($ret))
 	<div class="product">		
 		<div class="product-image">
 			<div class="image">
-				<a href="product-details.php?pid=<?php echo htmlentities($row['id']);?>"><img  src="assets/images/blank.gif" data-echo="admin/productimages/<?php echo htmlentities($row['id']);?>/<?php echo htmlentities($row['productImage1']);?>" alt="" width="200" height="300"></a>
+				<a href="/product-details.php?pid=<?php echo htmlentities($row['id']);?>"><img  src="/assets/images/blank.gif" data-echo="admin/productimages/<?php echo htmlentities($row['id']);?>/<?php echo htmlentities($row['productImage1']);?>" alt="" width="200" height="300"></a>
 			</div><!-- /.image -->			                      		   
 		</div><!-- /.product-image -->
 			
 		
 		<div class="product-info text-left">
-			<h3 class="name"><a href="product-details.php?pid=<?php echo htmlentities($row['id']);?>"><?php echo htmlentities($row['productName']);?></a></h3>
+			<h3 class="name"><a href="/product-details.php?pid=<?php echo htmlentities($row['id']);?>"><?php echo htmlentities($row['productName']);?></a></h3>
 			<div class="rating rateit-small"></div>
 			<div class="description"></div>
 
@@ -216,7 +216,7 @@ while ($row=mysqli_fetch_array($ret))
 										<button class="btn btn-primary icon" data-toggle="dropdown" type="button">
 								<i class="fa fa-shopping-cart"></i>													
 							</button>
-							<a href="category.php?page=product&action=add&id=<?php echo $row['id']; ?>">
+							<a href="/category.php?page=product&action=add&id=<?php echo $row['id']; ?>">
 							<button class="btn btn-primary" type="button">Add to cart</button></a>
 								<?php } else {?>
 							<div class="action" style="color:red">Out of Stock</div>
@@ -225,7 +225,7 @@ while ($row=mysqli_fetch_array($ret))
 						</li>
 	                   
 		                <li class="lnk wishlist">
-							<a class="add-to-cart" href="category.php?pid=<?php echo htmlentities($row['id'])?>&&action=wishlist" title="Wishlist">
+							<a class="add-to-cart" href="/category.php?pid=<?php echo htmlentities($row['id'])?>&&action=wishlist" title="Wishlist">
 								 <i class="icon fa fa-heart"></i>
 							</a>
 						</li>
@@ -269,21 +269,21 @@ while ($row=mysqli_fetch_array($ret))
 </div>
 </div>
 <?php include('includes/footer.php');?>
-	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="/assets/js/jquery-1.11.1.min.js"></script>
 	
-	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="/assets/js/bootstrap.min.js"></script>
 	
-	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="assets/js/owl.carousel.min.js"></script>
+	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="/assets/js/owl.carousel.min.js"></script>
 	
-	<script src="assets/js/echo.min.js"></script>
-	<script src="assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="assets/js/bootstrap-slider.min.js"></script>
-    <script src="assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
-    <script src="assets/js/bootstrap-select.min.js"></script>
-    <script src="assets/js/wow.min.js"></script>
-	<script src="assets/js/scripts.js"></script>
+	<script src="/assets/js/echo.min.js"></script>
+	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="/assets/js/bootstrap-slider.min.js"></script>
+    <script src="/assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
+    <script src="/assets/js/bootstrap-select.min.js"></script>
+    <script src="/assets/js/wow.min.js"></script>
+	<script src="/assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	

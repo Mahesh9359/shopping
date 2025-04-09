@@ -14,14 +14,14 @@ else{
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin| Today's Orders</title>
-    <link type="text/css" href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link type="text/css" href="css/theme.css" rel="stylesheet">
-    <link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" href="/css/theme.css" rel="stylesheet">
+    <link type="text/css" href="/images/icons/css/font-awesome.css" rel="stylesheet">
     <link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="scripts/datatables/jquery.dataTables.min.js"></script>
+    <script src="/scripts/datatables/jquery.dataTables.min.js"></script>
     
     <style>
         /* Table container */
@@ -134,7 +134,7 @@ else{
                                                 <td><?php echo htmlentities($row['quantity']);?></td>
                                                 <td><?php echo htmlentities(($row['quantity']*$row['productprice'])+$row['shippingcharge']);?></td>
                                                 <td><?php echo htmlentities($row['orderdate']);?></td>
-                                                <td><a href="updateorder.php?oid=<?php echo htmlentities($row['id']);?>" title="Update order" target="_blank"><i class="icon-edit"></i></a></td>
+                                                <td><a href="/updateorder.php?oid=<?php echo htmlentities($row['id']);?>" title="Update order" target="_blank"><i class="icon-edit"></i></a></td>
                                             </tr>
                                             <?php $cnt++; } ?>
                                         </tbody>

@@ -16,10 +16,10 @@ $currentTime = date('d-m-Y h:i:s A', time());
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Pending Orders</title>
-    <link type="text/css" href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link type="text/css" href="css/theme.css" rel="stylesheet">
-    <link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" href="/css/theme.css" rel="stylesheet">
+    <link type="text/css" href="/images/icons/css/font-awesome.css" rel="stylesheet">
     <link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'>
     <style>
         .table-responsive {
@@ -121,7 +121,7 @@ ORDER BY orders.orderDate DESC
                                                     <td><?php echo htmlentities($row['orderdate']); ?></td>
                                                     <td><?php echo $row['status'] ? htmlentities($row['status']) : 'Pending'; ?></td>
                                                     <td>
-                                                        <a href="updateorder.php?oid=<?php echo $row['id']; ?>" title="Update order">
+                                                        <a href="/updateorder.php?oid=<?php echo $row['id']; ?>" title="Update order">
                                                             <i class="icon-edit"></i>
                                                         </a>
                                                     </td>
@@ -146,10 +146,10 @@ ORDER BY orders.orderDate DESC
 
 <?php include('include/footer.php');?>
 
-<script src="scripts/jquery-1.9.1.min.js"></script>
-<script src="scripts/jquery-ui-1.10.1.custom.min.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
-<script src="scripts/datatables/jquery.dataTables.js"></script>
+<script src="/scripts/jquery-1.9.1.min.js"></script>
+<script src="/scripts/jquery-ui-1.10.1.custom.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/scripts/datatables/jquery.dataTables.js"></script>
 
 <script>
     $(document).ready(function() {

@@ -10,10 +10,10 @@ $oid = intval($_GET['oid'] ?? 0);
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Tracking Details</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/green.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/green.css">
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
     <style>
     .tracking-container {
@@ -78,7 +78,7 @@ $oid = intval($_GET['oid'] ?? 0);
         <div class="container">
             <div class="breadcrumb-inner">
                 <ul class="list-inline list-unstyled">
-                    <li><a href="index.php">Home</a></li>
+                    <li><a href="/index.php">Home</a></li>
                     <li class='active'>Order Tracking</li>
                 </ul>
             </div>
@@ -156,9 +156,9 @@ $oid = intval($_GET['oid'] ?? 0);
 
     <?php include('includes/footer.php'); ?>
 
-    <script src="assets/js/jquery-1.11.1.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="assets/js/scripts.js"></script>
+    <script src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="/assets/js/scripts.js"></script>
 </body>
 </html>

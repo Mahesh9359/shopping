@@ -9,10 +9,10 @@ include('include/header.php');
 <head>
     <meta charset="UTF-8">
     <title>Pay with Razorpay</title>
-    <link type="text/css" href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link type="text/css" href="./css/theme.css" rel="stylesheet">
-    <link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" href="/./css/theme.css" rel="stylesheet">
+    <link type="text/css" href="/images/icons/css/font-awesome.css" rel="stylesheet">
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -41,7 +41,7 @@ include('include/header.php');
 
 <?php include('include/footer.php'); ?>
 
-<script src="scripts/jquery-1.9.1.min.js"></script>
+<script src="/scripts/jquery-1.9.1.min.js"></script>
 <script>
     document.getElementById('pay-btn').onclick = function () {
         var options = {

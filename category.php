@@ -50,7 +50,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
     <title>Product Category</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="/assets/css/green.css">
     <link rel="stylesheet" href="/assets/css/owl.carousel.css">
@@ -142,7 +142,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
                                 while($row = mysqli_fetch_array($sql)) {
                                 ?>
                                 <li class="dropdown menu-item">
-                                    <a href="sub-category.php?scid=<?php echo $row['id'];?>" class="dropdown-toggle"><i class="icon fa fa-desktop fa-fw"></i>
+                                    <a href="/sub-category.php?scid=<?php echo $row['id'];?>" class="dropdown-toggle"><i class="icon fa fa-desktop fa-fw"></i>
                                     <?php echo $row['subcategory'];?></a>
                                 </li>
                                 <?php } ?>
@@ -167,7 +167,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
                                     <div class="accordion">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
-                                                <a href="category.php?cid=<?php echo $row['id'];?>" class="accordion-toggle collapsed">
+                                                <a href="/category.php?cid=<?php echo $row['id'];?>" class="accordion-toggle collapsed">
                                                     <?php echo $row['categoryName'];?>
                                                 </a>
                                             </div>  
@@ -218,14 +218,14 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
                                                 <div class="product">        
                                                     <div class="product-image">
                                                         <div class="image">
-                                                            <a href="product-details.php?pid=<?php echo htmlentities($row['id']);?>">
-                                                                <img src="admin/productimages/<?php echo htmlentities($row['id']);?>/<?php echo htmlentities($row['productImage1']);?>" alt="<?php echo htmlentities($row['productName']);?>">
+                                                            <a href="/product-details.php?pid=<?php echo htmlentities($row['id']);?>">
+                                                                <img src="/admin/productimages/<?php echo htmlentities($row['id']);?>/<?php echo htmlentities($row['productImage1']);?>" alt="<?php echo htmlentities($row['productName']);?>">
                                                             </a>
                                                         </div>
                                                     </div>
                                                     
                                                     <div class="product-info text-left">
-                                                        <h3 class="name"><a href="product-details.php?pid=<?php echo htmlentities($row['id']);?>"><?php echo htmlentities($row['productName']);?></a></h3>
+                                                        <h3 class="name"><a href="/product-details.php?pid=<?php echo htmlentities($row['id']);?>"><?php echo htmlentities($row['productName']);?></a></h3>
                                                         <div class="rating rateit-small"></div>
                                                         <div class="description"></div>
 
@@ -247,7 +247,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
                                                                     <button class="btn btn-primary icon" data-toggle="dropdown" type="button">
                                                                         <i class="fa fa-shopping-cart"></i>                                                    
                                                                     </button>
-                                                                    <a href="category.php?page=product&action=add&id=<?php echo $row['id']; ?>">
+                                                                    <a href="/category.php?page=product&action=add&id=<?php echo $row['id']; ?>">
                                                                         <button class="btn btn-primary" type="button">Add to cart</button>
                                                                     </a>
                                                                     <?php } else { ?>
@@ -255,7 +255,7 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
                                                                     <?php } ?>
                                                                 </li>
                                                                 <li class="lnk wishlist">
-                                                                    <a class="add-to-cart" href="category.php?pid=<?php echo htmlentities($row['id'])?>&&action=wishlist" title="Wishlist">
+                                                                    <a class="add-to-cart" href="/category.php?pid=<?php echo htmlentities($row['id'])?>&&action=wishlist" title="Wishlist">
                                                                         <i class="icon fa fa-heart"></i>
                                                                     </a>
                                                                 </li>
@@ -287,17 +287,17 @@ if(isset($_GET['pid']) && $_GET['action'] == "wishlist") {
     <?php include('includes/footer.php');?>
 
     <!-- JavaScript -->
-    <script src="assets/js/jquery-1.11.1.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="assets/js/owl.carousel.min.js"></script>
-    <script src="assets/js/echo.min.js"></script>
-    <script src="assets/js/jquery.easing-1.3.min.js"></script>
-    <script src="assets/js/bootstrap-slider.min.js"></script>
-    <script src="assets/js/jquery.rateit.min.js"></script>
-    <script src="assets/js/lightbox.min.js"></script>
-    <script src="assets/js/bootstrap-select.min.js"></script>
-    <script src="assets/js/wow.min.js"></script>
-    <script src="assets/js/scripts.js"></script>
+    <script src="/assets/js/jquery-1.11.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="/assets/js/owl.carousel.min.js"></script>
+    <script src="/assets/js/echo.min.js"></script>
+    <script src="/assets/js/jquery.easing-1.3.min.js"></script>
+    <script src="/assets/js/bootstrap-slider.min.js"></script>
+    <script src="/assets/js/jquery.rateit.min.js"></script>
+    <script src="/assets/js/lightbox.min.js"></script>
+    <script src="/assets/js/bootstrap-select.min.js"></script>
+    <script src="/assets/js/wow.min.js"></script>
+    <script src="/assets/js/scripts.js"></script>
 </body>
 </html>

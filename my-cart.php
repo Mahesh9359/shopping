@@ -1,7 +1,7 @@
 <?php 
 session_start();
 error_reporting(0);
-include('/includes/config.php');
+include('includes/config.php');
 
 // Initialize variables with proper checks
 $user_id = isset($_SESSION['id']) ? intval($_SESSION['id']) : 0;
@@ -105,9 +105,9 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
 </head>
 <body class="cnt-home">
 <header class="header-style-1">
-    <?php include('/includes/top-header.php');?>
-    <?php include('/includes/main-header.php');?>
-    <?php include('/includes/menu-bar.php');?>
+    <?php include('includes/top-header.php');?>
+    <?php include('includes/main-header.php');?>
+    <?php include('includes/menu-bar.php');?>
 </header>
 
 <div class="breadcrumb">
@@ -344,8 +344,8 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     </div>
 </div>
 
-<?php include('/includes/brands-slider.php');?>
-<?php include('/includes/footer.php');?>
+<?php include('includes/brands-slider.php');?>
+<?php include('includes/footer.php');?>
 
 <script src="/assets/js/jquery-1.11.1.min.js"></script>
 <script src="/assets/js/bootstrap.min.js"></script>
