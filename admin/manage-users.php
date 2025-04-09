@@ -1,19 +1,16 @@
 <?php
-// 🚫 Ensure this is the very first line — NO whitespace or output before it
+// 🚫 No output before this!
+ob_start();
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include('include/config.php');
 
-// ✅ Safe check for session variable
-if (!isset($_SESSION['alogin']) || strlen($_SESSION['alogin']) == 0) {
+if (empty($_SESSION['alogin'])) {
     header('location:index.php');
     exit();
 }
-
-date_default_timezone_set('Asia/Kolkata');
-$currentTime = date('d-m-Y h:i:s A', time());
 
 if (isset($_GET['del'])) {
     mysqli_query($con, "DELETE FROM products WHERE id = '" . $_GET['id'] . "'");
@@ -24,14 +21,24 @@ if (isset($_GET['del'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>Admin | Manage Users</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="css/theme.css" rel="stylesheet">
     <link href="images/icons/css/font-awesome.css" rel="stylesheet">
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet">
+    <link href="scripts/datatables/jquery.dataTables.min.css" rel="stylesheet">
+
+    <style>
+        .scrollable-table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table.dataTable {
+            min-width: 1200px; /* Force table wider */
+        }
+    </style>
 </head>
 <body>
 
@@ -40,7 +47,7 @@ if (isset($_GET['del'])) {
 <div class="wrapper">
     <div class="container">
         <div class="row">
-            <?php include('include/sidebar.php'); ?>				
+            <?php include('include/sidebar.php'); ?>
             <div class="span9">
                 <div class="content">
 
@@ -49,7 +56,7 @@ if (isset($_GET['del'])) {
                             <h3>Manage Users</h3>
                         </div>
                         <div class="module-body table">
-                            <?php if (isset($_GET['del'])) { ?>
+                            <?php if (!empty($_SESSION['delmsg'])) { ?>
                                 <div class="alert alert-error">
                                     <button type="button" class="close" data-dismiss="alert">×</button>
                                     <strong>Oh snap!</strong> <?php echo htmlentities($_SESSION['delmsg']); ?>
@@ -57,19 +64,16 @@ if (isset($_GET['del'])) {
                                 </div>
                             <?php } ?>
 
-                            <br />
-
-                            <!-- ✅ Added horizontal scroll wrapper -->
-                            <div style="overflow-x: auto;">
-                                <table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped display" width="100%">
+                            <div class="scrollable-table-container mt-3">
+                                <table id="userTable" class="datatable-1 table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
                                             <th>Email</th>
-                                            <th>Contact no</th>
-                                            <th>Shipping Address/City/State/Pincode</th>
-                                            <th>Billing Address/City/State/Pincode</th>
+                                            <th>Contact No</th>
+                                            <th>Shipping Address</th>
+                                            <th>Billing Address</th>
                                             <th>Reg. Date</th>
                                         </tr>
                                     </thead>
@@ -84,36 +88,36 @@ if (isset($_GET['del'])) {
                                             <td><?php echo htmlentities($row['name']); ?></td>
                                             <td><?php echo htmlentities($row['email']); ?></td>
                                             <td><?php echo htmlentities($row['contactno']); ?></td>
-                                            <td><?php echo htmlentities($row['shippingAddress'] . ", " . $row['shippingCity'] . ", " . $row['shippingState'] . "-" . $row['shippingPincode']); ?></td>
-                                            <td><?php echo htmlentities($row['billingAddress'] . ", " . $row['billingCity'] . ", " . $row['billingState'] . "-" . $row['billingPincode']); ?></td>
+                                            <td><?php echo htmlentities($row['shippingAddress'] . ", " . $row['shippingCity'] . ", " . $row['shippingState'] . " - " . $row['shippingPincode']); ?></td>
+                                            <td><?php echo htmlentities($row['billingAddress'] . ", " . $row['billingCity'] . ", " . $row['billingState'] . " - " . $row['billingPincode']); ?></td>
                                             <td><?php echo htmlentities($row['regDate']); ?></td>
                                         </tr>
                                         <?php $cnt++; } ?>
                                     </tbody>
                                 </table>
-                            </div> <!-- ✅ End scroll wrapper -->
+                            </div>
+
                         </div>
-                    </div>						
-                </div><!--/.content-->
-            </div><!--/.span9-->
+                    </div>
+
+                </div>
+            </div><!-- /.span9 -->
         </div>
-    </div><!--/.container-->
-</div><!--/.wrapper-->
+    </div><!-- /.container -->
+</div><!-- /.wrapper -->
 
 <?php include('include/footer.php'); ?>
 
 <script src="scripts/jquery-1.9.1.min.js"></script>
 <script src="scripts/jquery-ui-1.10.1.custom.min.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
-<script src="scripts/flot/jquery.flot.js"></script>
-<script src="scripts/datatables/jquery.dataTables.js"></script>
+<script src="scripts/datatables/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('.datatable-1').dataTable();
-        $('.dataTables_paginate').addClass("btn-group datatable-pagination");
-        $('.dataTables_paginate > a').wrapInner('<span />');
-        $('.dataTables_paginate > a:first-child').append('<i class="icon-chevron-left shaded"></i>');
-        $('.dataTables_paginate > a:last-child').append('<i class="icon-chevron-right shaded"></i>');
+        $('#userTable').DataTable({
+            scrollX: true,
+            responsive: false
+        });
     });
 </script>
 </body>
