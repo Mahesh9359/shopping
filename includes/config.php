@@ -1,4 +1,5 @@
 <?php
+// Database connection only
 define('DB_SERVER', 'shuttle.proxy.rlwy.net');
 define('DB_USER', 'root');
 define('DB_PASS', 'iBBQXBVUlxpctlJzhpnVFWjOYeCAzvPa');
@@ -9,27 +10,8 @@ $con = mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_NAME, DB_PORT);
 
 // Check connection
 if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-    exit();
+    die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 
-if (isset($_POST['login'])) {
-    $username = $_POST['username'];
-    $password = md5($_POST['password']); // Hash the password
-
-    $stmt = $con->prepare("SELECT * FROM admin WHERE username=? AND password=?");
-    $stmt->bind_param("ss", $username, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Successful login logic
-        $_SESSION['admin_login'] = $username;
-        header("location: admin_dashboard.php"); // Redirect to the admin dashboard
-        exit();
-    } else {
-        echo "<script>alert('Invalid username or password');</script>";
-    }
-}
+// Turn off unnecessary notices/deprecated warnings in production
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-?>

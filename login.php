@@ -14,8 +14,8 @@ if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['last_login_attempt'] = 0;
 }
 
-// Code user Registration
-if(isset($_POST['submit'])) {
+// ========== USER REGISTRATION ==========
+if (isset($_POST['submit'])) {
     // CSRF validation
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF token validation failed");
@@ -26,138 +26,113 @@ if(isset($_POST['submit'])) {
     $contactno = mysqli_real_escape_string($con, $_POST['contactno']);
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];
-    
-    // Validation
-    $errors = array();
-    
-    // Name validation
-    if(empty($name)) {
-        $errors[] = "Full name is required";
-    } elseif(!preg_match("/^[a-zA-Z ]*$/", $name)) {
-        $errors[] = "Only letters and white space allowed in name";
+
+    $errors = [];
+
+    if (empty($name) || !preg_match("/^[a-zA-Z ]*$/", $name)) {
+        $errors[] = "Valid full name is required";
     }
-    
-    // Email validation
-    if(empty($email)) {
-        $errors[] = "Email is required";
-    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format";
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Valid email is required";
     } else {
-        // Check if email already exists
         $check_email = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");
-        if(mysqli_num_rows($check_email) > 0) {
+        if (mysqli_num_rows($check_email) > 0) {
             $errors[] = "Email already exists";
         }
     }
-    
-    // Contact number validation
-    if(empty($contactno)) {
-        $errors[] = "Contact number is required";
-    } elseif(!preg_match("/^[0-9]{10}$/", $contactno)) {
-        $errors[] = "Contact number must be 10 digits";
+
+    if (empty($contactno) || !preg_match("/^[0-9]{10}$/", $contactno)) {
+        $errors[] = "Valid 10-digit contact number is required";
     }
-    
-    // Password validation
-    if(empty($password)) {
-        $errors[] = "Password is required";
-    } elseif(strlen($password) < 8) {
-        $errors[] = "Password must be at least 8 characters";
-    } elseif(!preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/", $password)) {
-        $errors[] = "Password must contain at least one number, one uppercase and one lowercase letter";
-    } elseif($password != $confirmpassword) {
+
+    if (empty($password) || strlen($password) < 8 || !preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/", $password)) {
+        $errors[] = "Password must be at least 8 characters with a number, uppercase and lowercase letter";
+    }
+
+    if ($password !== $confirmpassword) {
         $errors[] = "Passwords do not match";
     }
-    
-    // If no errors, proceed with registration
-    if(empty($errors)) {
+
+    if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $query = mysqli_query($con, "INSERT INTO users(name,email,contactno,password) VALUES('$name','$email','$contactno','$hashed_password')");
-        
-        if($query) {
-            echo "<script>alert('You are successfully registered');</script>";
-            echo "<script>window.location.href='/login.php'</script>";
+        if ($query) {
+            $_SESSION['successmsg'] = "You are successfully registered.";
+            header("Location: login.php");
+            exit();
         } else {
             $errors[] = "Something went wrong. Please try again.";
         }
     }
-    
-    // Display errors if any
-    if(!empty($errors)) {
+
+    if (!empty($errors)) {
         $_SESSION['errmsg'] = implode("<br>", $errors);
-        echo "<script>window.location.href='/login.php'</script>";
+        header("Location: login.php");
         exit();
     }
 }
 
-// Code for User login
-if(isset($_POST['login'])) {
-    // CSRF validation
+// ========== USER LOGIN ==========
+if (isset($_POST['login'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF token validation failed");
     }
 
-    // Rate limiting check
+    // Rate limiting
     if ($_SESSION['login_attempts'] > 5 && (time() - $_SESSION['last_login_attempt']) < 300) {
-        $_SESSION['errmsg'] = "Too many login attempts. Please try again in 5 minutes.";
+        $_SESSION['errmsg'] = "Too many login attempts. Try again in 5 minutes.";
         header("Location: login.php");
         exit();
     }
 
     $email = mysqli_real_escape_string($con, $_POST['email']);
     $password = $_POST['password'];
-    
-    // Validation
-    $errors = array();
-    
-    if(empty($email)) {
-        $errors[] = "Email is required";
-    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format";
+
+    $errors = [];
+
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Valid email is required";
     }
-    
-    if(empty($password)) {
+
+    if (empty($password)) {
         $errors[] = "Password is required";
     }
-    
-    if(empty($errors)) {
+
+    if (empty($errors)) {
         $query = mysqli_query($con, "SELECT * FROM users WHERE email='$email'");
-        $num = mysqli_fetch_array($query);
-        
-        if($num > 0 && password_verify($password, $num['password'])) {
-            // Reset login attempts on successful login
+        $user = mysqli_fetch_array($query);
+
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['login_attempts'] = 0;
-            
-            $extra = "/my-cart.php";
+
             $_SESSION['login'] = $email;
-            $_SESSION['id'] = $num['id'];
-            $_SESSION['username'] = $num['name'];
-            $uip = $_SERVER['REMOTE_ADDR'];
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['username'] = $user['name'];
+
+            $ip = $_SERVER['REMOTE_ADDR'];
             $status = 1;
-            
-            mysqli_query($con, "INSERT INTO userlog(userEmail,userip,status) VALUES('".$_SESSION['login']."','$uip','$status')");
-            
-            $host = $_SERVER['HTTP_HOST'];
-            $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-            header("location:http://$host$uri/$extra");
+            mysqli_query($con, "INSERT INTO userlog(userEmail, userip, status) VALUES('$email', '$ip', '$status')");
+
+            header("Location: my-cart.php");
             exit();
         } else {
-            $errors[] = "Invalid email or password";
             $_SESSION['login_attempts']++;
             $_SESSION['last_login_attempt'] = time();
+
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $status = 0;
+            mysqli_query($con, "INSERT INTO userlog(userEmail, userip, status) VALUES('$email', '$ip', '$status')");
+
+            $_SESSION['errmsg'] = "Invalid email or password.";
+            header("Location: login.php");
+            exit();
         }
     }
-    
-    // If errors exist
-    if(!empty($errors)) {
+
+    if (!empty($errors)) {
         $_SESSION['errmsg'] = implode("<br>", $errors);
-        $extra = "login.php";
-        $uip = $_SERVER['REMOTE_ADDR'];
-        $status = 0;
-        mysqli_query($con, "INSERT INTO userlog(userEmail,userip,status) VALUES('$email','$uip','$status')");
-        
-        $host = $_SERVER['HTTP_HOST'];
-        $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-        header("location:http://$host$uri/$extra");
+        header("Location: login.php");
         exit();
     }
 }
