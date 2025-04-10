@@ -50,7 +50,15 @@ if(isset($_POST['ordersubmit'])) {
             foreach(array_combine($pdd, $quantity) as $qty => $val34){
                 mysqli_query($con,"INSERT INTO orders(userId,productId,quantity) VALUES('$user_id','$qty','$val34')");
             }
-            header('location:payment-method.php');
+            
+            // Store a flag in session to track order submission
+            $_SESSION['order_submitted'] = true;
+            
+            // Use JavaScript to open payment-method.php in a new tab
+            echo "<script>
+                window.open('payment-method.php', '_blank');
+                window.location.href = 'my-cart.php'; // redirect current page to cart or order history
+            </script>";
             exit;
         }
     }
@@ -90,18 +98,18 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>My Cart</title>
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/green.css">
-    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-    <link rel="stylesheet" href="/assets/css/owl.transitions.css">
-    <link href="/assets/css/lightbox.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/animate.min.css">
-    <link rel="stylesheet" href="/assets/css/rateit.css">
-    <link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/green.css">
+    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="assets/css/owl.transitions.css">
+    <link href="assets/css/lightbox.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/rateit.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
 </head>
 <body class="cnt-home">
 <header class="header-style-1">
@@ -114,7 +122,7 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     <div class="container">
         <div class="breadcrumb-inner">
             <ul class="list-inline list-unstyled">
-                <li><a href="/index.php">Home</a></li>
+                <li><a href="index.php">Home</a></li>
                 <li class='active'>Shopping Cart</li>
             </ul>
         </div>
@@ -146,7 +154,7 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                         <td colspan="7">
                                             <div class="shopping-cart-btn">
                                                 <span class="">
-                                                    <a href="/index.php" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
+                                                    <a href="index.php" class="btn btn-upper btn-primary outer-left-xs">Continue Shopping</a>
                                                     <input type="submit" name="submit" value="Update shopping cart" class="btn btn-upper btn-primary pull-right outer-right-xs">
                                                 </span>
                                             </div>
@@ -173,13 +181,13 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                     <tr>
                                         <td class="romove-item"><input type="checkbox" name="remove_code[]" value="<?php echo $productId; ?>" /></td>
                                         <td class="cart-image">
-                                            <a class="entry-thumbnail" href="/product-details.php?pid=<?php echo $productId; ?>">
+                                            <a class="entry-thumbnail" href="product-details.php?pid=<?php echo $productId; ?>">
                                                 <img src="admin/productimages/<?php echo $productId; ?>/<?php echo htmlentities($row['productImage1']); ?>" alt="" width="114" height="146">
                                             </a>
                                         </td>
                                         <td class="cart-product-name-info">
                                             <h4 class='cart-product-description'>
-                                                <a href="/product-details.php?pid=<?php echo $productId; ?>">
+                                                <a href="product-details.php?pid=<?php echo $productId; ?>">
                                                     <?php echo htmlentities($row['productName']); ?>
                                                 </a>
                                             </h4>
@@ -254,7 +262,7 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                         <?php 
                                             }
                                         } else {
-                                            echo '<p>Please <a href="/login.php">login</a> to manage your billing address</p>';
+                                            echo '<p>Please <a href="login.php">login</a> to manage your billing address</p>';
                                         }
                                         ?>
                                     </form>
@@ -301,7 +309,7 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                         <?php 
                                             }
                                         } else {
-                                            echo '<p>Please <a href="/login.php">login</a> to manage your shipping address</p>';
+                                            echo '<p>Please <a href="login.php">login</a> to manage your shipping address</p>';
                                         }
                                         ?>
                                     </form>
@@ -328,9 +336,10 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                 <td>
                                     <div class="cart-checkout-btn pull-right">
                                         <?php if($is_logged_in): ?>
-                                        <button type="submit" name="ordersubmit" class="btn btn-primary" form="cart">PROCEED TO CHECKOUT</button>
+                                            <button type="button" class="btn btn-primary" id="checkout-btn">PROCEED TO CHECKOUT</button>
+
                                         <?php else: ?>
-                                        <a href="/login.php" class="btn btn-primary">LOGIN TO CHECKOUT</a>
+                                        <a href="login.php" class="btn btn-primary">LOGIN TO CHECKOUT</a>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -347,17 +356,36 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
 <?php include('includes/brands-slider.php');?>
 <?php include('includes/footer.php');?>
 
-<script src="/assets/js/jquery-1.11.1.min.js"></script>
-<script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-<script src="/assets/js/owl.carousel.min.js"></script>
-<script src="/assets/js/echo.min.js"></script>
-<script src="/assets/js/jquery.easing-1.3.min.js"></script>
-<script src="/assets/js/bootstrap-slider.min.js"></script>
-<script src="/assets/js/jquery.rateit.min.js"></script>
-<script src="/assets/js/lightbox.min.js"></script>
-<script src="/assets/js/bootstrap-select.min.js"></script>
-<script src="/assets/js/wow.min.js"></script>
-<script src="/assets/js/scripts.js"></script>
+<script src="assets/js/jquery-1.11.1.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+<script src="assets/js/owl.carousel.min.js"></script>
+<script src="assets/js/echo.min.js"></script>
+<script src="assets/js/jquery.easing-1.3.min.js"></script>
+<script src="assets/js/bootstrap-slider.min.js"></script>
+<script src="assets/js/jquery.rateit.min.js"></script>
+<script src="assets/js/lightbox.min.js"></script>
+<script src="assets/js/bootstrap-select.min.js"></script>
+<script src="assets/js/wow.min.js"></script>
+<script src="assets/js/scripts.js"></script>
+<script>
+document.getElementById("checkout-btn").addEventListener("click", function () {
+    const cartForm = document.getElementById("cart");
+
+    const formData = new FormData(cartForm);
+    formData.append("ordersubmit", "true");
+
+    fetch("my-cart.php", {
+        method: "POST",
+        body: formData
+    }).then(res => {
+        // Open new tab for payment
+        window.open("payment-method.php", "_blank");
+        // Reload cart page to clear items if needed
+        window.location.href = "my-cart.php";
+    });
+});
+</script>
+
 </body>
 </html>
