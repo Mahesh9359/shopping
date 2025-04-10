@@ -9,6 +9,19 @@ if(strlen($_SESSION['login'])==0) {
     exit();
 }
 
+// Calculate cart total
+$totalCartAmount = 0;
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $productId => $details) {
+        $productId = intval($productId);
+        $qty = intval($details['quantity']);
+        $result = mysqli_query($con, "SELECT productPrice, shippingCharge FROM products WHERE id = '$productId'");
+        if ($row = mysqli_fetch_assoc($result)) {
+            $totalCartAmount += ($row['productPrice'] * $qty) + $row['shippingCharge'];
+        }
+    }
+}
+
 if (isset($_POST['submit'])) {
     mysqli_query($con,"UPDATE orders SET paymentMethod='".$_POST['paymethod']."' WHERE userId='".$_SESSION['id']."' AND paymentMethod IS NULL");
     unset($_SESSION['cart']);
@@ -54,6 +67,12 @@ if (isset($_POST['submit'])) {
         .breadcrumb { background-color: transparent; margin-bottom: 40px; }
         .breadcrumb .breadcrumb-item a { color: #007bff; text-decoration: none; }
         .breadcrumb .breadcrumb-item.active { color: #6c757d; }
+        .price-summary {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
         @media (max-width: 576px) { .payment-card { padding: 25px; } }
     </style>
 </head>
@@ -78,20 +97,13 @@ if (isset($_POST['submit'])) {
 
 <div class="payment-card">
     <h2>Select Your Payment Method</h2>
-    <form method="post">
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymethod" id="cod" value="COD" checked>
-            <label class="form-check-label" for="cod">Cash on Delivery (COD)</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymethod" id="internet" value="Internet Banking">
-            <label class="form-check-label" for="internet">Internet Banking</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="paymethod" id="card" value="Debit / Credit card">
-            <label class="form-check-label" for="card">Debit / Credit Card</label>
-        </div>
 
+    <div class="price-summary">
+        <h4>Total Amount Payable: Rs <?php echo number_format($totalCartAmount, 2); ?></h4>
+    </div>
+
+    <form method="post">
+        
         <button type="submit" name="submit" class="btn btn-primary mt-4 btn-submit">Cash on Delivery</button><br><br>
         <button type="button" id="rzp-button" class="btn btn-success mt-2 btn-submit">Pay with Razorpay</button>
     </form>
@@ -105,29 +117,28 @@ if (isset($_POST['submit'])) {
         e.preventDefault();
         var options = {
             "key": "rzp_test_8MkpZSt86Wa9F3", // Replace with your test key
-            "amount": "200", // Amount in paise = INR 500
+            "amount": "<?php echo $totalCartAmount * 100; ?>", // in paise
             "currency": "INR",
             "name": "My Shop",
             "description": "Order Payment",
             "handler": function (response) {
-    // Send payment response to server for verification
-    $.ajax({
-        url: 'verify-payment.php',
-        type: 'POST',
-        data: {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature
-        },
-        success: function (data) {
-            // You can log or debug 'data' if needed
-            window.location.href = 'order-history.php';
-        },
-        error: function () {
-            alert('Payment verification failed. Please contact support.');
-        }
-    });
-},
+                // Send payment response to server for verification
+                $.ajax({
+                    url: 'verify-payment.php',
+                    type: 'POST',
+                    data: {
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature
+                    },
+                    success: function (data) {
+                        window.location.href = 'order-history.php';
+                    },
+                    error: function () {
+                        alert('Payment verification failed. Please contact support.');
+                    }
+                });
+            },
             "prefill": {
                 "name": "<?php echo $_SESSION['login']; ?>",
                 "email": "<?php echo $_SESSION['login']; ?>"
