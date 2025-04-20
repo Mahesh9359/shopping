@@ -93,8 +93,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit']) && $pid > 0){
     <div class="container">
         <div class="breadcrumb-inner">
             <?php
-            $ret=mysqli_query($con,"select category.categoryName as catname,subCategory as subcatname,products.productName as pname from products join category on category.id=products.category join subcategory on subcategory.id=products.subCategory where products.id='$pid'");
-            while ($rw=mysqli_fetch_array($ret)) {
+            $ret=mysqli_query($con,"SELECT 
+            category.categoryName as catname,
+            subcategory.subcategory as subcatname,
+            products.productName as pname 
+        FROM products 
+        JOIN category ON category.id=products.category 
+        JOIN subcategory ON subcategory.id=products.subCategory 
+        WHERE products.id='$pid'");
+        while ($rw=mysqli_fetch_array($ret)) {
             ?>
             <ul class="list-inline list-unstyled">
                 <li><a href="index.php">Home</a></li>
@@ -488,7 +495,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit']) && $pid > 0){
                     <h3 class="section-title">Related Products</h3>
                     <div class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
                         <?php 
-                        $qry=mysqli_query($con,"select * from products where subCategory='$subcid' and category='$cid'");
+$qry=mysqli_query($con,"select * from products where products.subCategory='$subcid' and products.category='$cid'");
                         while($rw=mysqli_fetch_array($qry)) {
                         ?>    
                         <div class="item item-carousel">
