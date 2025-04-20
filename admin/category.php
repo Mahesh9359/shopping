@@ -2,9 +2,9 @@
 <?php
 session_start();
 include('include/config.php');
-if(strlen($_SESSION['alogin'])==0)
-	{	
-header('location:index.php');
+if (!isset($_SESSION['alogin']) || strlen((string)$_SESSION['alogin']) === 0) {
+    header('Location: index.php');
+    exit(); // 🔥 Always exit after sending headers
 }
 else{
 date_default_timezone_set('Asia/Kolkata');// change according timezone
