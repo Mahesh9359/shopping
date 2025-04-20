@@ -12,16 +12,17 @@ if (!isset($_SESSION['alogin']) || strlen($_SESSION['alogin']) == 0) {
     exit();
 }
 
-if (isset($_POST['submit'])) {
-    $category = $_POST['category'];
-    $subcat = $_POST['subcategory'];
-    $sql = mysqli_query($con, "INSERT INTO subcategory(categoryid, subcategory) VALUES('$category', '$subcat')");
-    $_SESSION['msg'] = "SubCategory Created !!";
+// Handle form submissions
+if(isset($_POST['submit'])) {
+    $category=$_POST['category'];
+    $subcat=$_POST['subcategory'];
+    $sql=mysqli_query($con,"insert into subcategory(categoryid,subcategory) values('$category','$subcat')");
+    $_SESSION['msg']="SubCategory Created !!";
 }
 
-if (isset($_GET['del'])) {
-    mysqli_query($con, "DELETE FROM subcategory WHERE id = '" . $_GET['id'] . "'");
-    $_SESSION['delmsg'] = "SubCategory deleted !!";
+if(isset($_GET['del'])) {
+    mysqli_query($con,"delete from subcategory where id = '".$_GET['id']."'");
+    $_SESSION['delmsg']="SubCategory deleted !!";
 }
 ?>
 
@@ -322,20 +323,22 @@ while($row=mysqli_fetch_array($query))
 
 <?php include('include/footer.php'); ?>
 
-<!-- Scripts -->
-<script src="scripts/jquery-1.9.1.min.js"></script>
-<script src="scripts/jquery-ui-1.10.1.custom.min.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
-<script src="scripts/flot/jquery.flot.js"></script>
-<script src="scripts/datatables/jquery.dataTables.js"></script>
-<script>
+    <script src="scripts/jquery-1.9.1.min.js"></script>
+    <script src="scripts/jquery-ui-1.10.1.custom.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="scripts/flot/jquery.flot.js"></script>
+    <script src="scripts/datatables/jquery.dataTables.js"></script>
+    <script>
     $(document).ready(function () {
-        $('.datatable-1').dataTable();
+        $('.datatable-1').dataTable({
+            "destroy": true, // Allows reinitialization
+            "retrieve": true // Alternative option
+        });
         $('.dataTables_paginate').addClass("btn-group datatable-pagination");
         $('.dataTables_paginate > a').wrapInner('<span />');
         $('.dataTables_paginate > a:first-child').append('<i class="icon-chevron-left shaded"></i>');
         $('.dataTables_paginate > a:last-child').append('<i class="icon-chevron-right shaded"></i>');
     });
-</script>
+    </script>
 </body>
 </html>
