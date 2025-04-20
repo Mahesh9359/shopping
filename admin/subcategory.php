@@ -110,36 +110,40 @@ if(isset($_GET['del'])) {
                             <h3>Sub Category</h3>
                         </div>
                         <div class="module-body table">
-                            <table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped display" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Category</th>
-                                        <th>Subcategory</th>
-                                        <th>Creation date</th>
-                                        <th>Last Updated</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php 
-                                    $query = mysqli_query($con, "SELECT subcategory.id, category.categoryName, subcategory.subcategory, subcategory.creationDate, subcategory.updationDate FROM subcategory JOIN category ON category.id = subcategory.categoryid");
-                                    $cnt = 1;
-                                    while($row = mysqli_fetch_array($query)): ?>                                    
-                                        <tr>
-                                            <td><?php echo htmlentities((string)($cnt ?? '')); ?></td>
-                                            <td><?php echo htmlentities($row['categoryName'] ?? ''); ?></td>
-                                            <td><?php echo htmlentities($row['subcategory'] ?? ''); ?></td>
-                                            <td><?php echo htmlentities($row['creationDate'] ?? ''); ?></td>
-                                            <td><?php echo htmlentities($row['updationDate'] ?? ''); ?></td>
-                                            <td>
-                                                <a href="edit-subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>"><i class="icon-edit"></i></a>
-                                                <a href="subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a>
-                                            </td>
-                                        </tr>
-                                    <?php $cnt++; endwhile; ?>
-                                </tbody>
-                            </table>
+                        <table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped display" width="100%">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Category</th>
+            <th>Subcategory</th>
+            <th>Creation date</th>
+            <th>Last Updated</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        $query = mysqli_query($con, "SELECT subcategory.id, category.categoryName, subcategory.subcategory, 
+                subcategory.creationDate, 
+                IFNULL(subcategory.updationDate, subcategory.creationDate) as lastUpdated
+                FROM subcategory 
+                JOIN category ON category.id = subcategory.categoryid");
+        $cnt = 1;
+        while($row = mysqli_fetch_array($query)): ?>                                    
+            <tr>
+                <td><?php echo htmlentities((string)$cnt); ?></td>
+                <td><?php echo htmlentities($row['categoryName'] ?? ''); ?></td>
+                <td><?php echo htmlentities($row['subcategory'] ?? ''); ?></td>
+                <td><?php echo htmlentities($row['creationDate'] ?? ''); ?></td>
+                <td><?php echo htmlentities($row['lastUpdated'] ?? $row['creationDate'] ?? 'Not updated'); ?></td>
+                <td>
+                    <a href="edit-subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>"><i class="icon-edit"></i></a>
+                    <a href="subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a>
+                </td>
+            </tr>
+        <?php $cnt++; endwhile; ?>
+    </tbody>
+</table>
                         </div>
                     </div>
                 </div><!--/.content-->
