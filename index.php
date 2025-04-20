@@ -736,7 +736,7 @@ $(document).ready(function() {
         var button = $(this);
         
         // Show loading state
-        button.html('<i class="fa fa-spinner fa-spin"></i> Adding...');
+        button.html('<i class="fa fa-spinner fa-spin"></i>');
         
         $.ajax({
             url: 'add-to-cart.php',
@@ -804,7 +804,7 @@ $(document).ready(function() {
     var button = $(this);
 
     // Show loading state
-    button.html('<i class="fa fa-spinner fa-spin"></i> Adding...');
+    button.html('<i class="fa fa-spinner fa-spin"></i>');
 
     $.ajax({
         url: 'index.php',
