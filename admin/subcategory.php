@@ -7,19 +7,25 @@ if (!isset($_SESSION['alogin']) || strlen((string)$_SESSION['alogin']) == 0) {
     exit();
 }
 
+// Initialize session messages
+$_SESSION['msg'] = $_SESSION['msg'] ?? '';
+$_SESSION['delmsg'] = $_SESSION['delmsg'] ?? '';
+
 // Handle form submission
 if(isset($_POST['submit'])) {
-    $category = mysqli_real_escape_string($con, $_POST['category']);
-    $subcat = mysqli_real_escape_string($con, $_POST['subcategory']);
+    $category = mysqli_real_escape_string($con, $_POST['category'] ?? '');
+    $subcat = mysqli_real_escape_string($con, $_POST['subcategory'] ?? '');
     $sql = mysqli_query($con, "INSERT INTO subcategory(categoryid, subcategory) VALUES('$category','$subcat')");
     $_SESSION['msg'] = "SubCategory Created !!";
 }
 
 // Handle deletion
 if(isset($_GET['del'])) {
-    $id = (int)$_GET['id'];
-    mysqli_query($con, "DELETE FROM subcategory WHERE id = '$id'");
-    $_SESSION['delmsg'] = "SubCategory deleted !!";
+    $id = (int)($_GET['id'] ?? 0);
+    if($id > 0) {
+        mysqli_query($con, "DELETE FROM subcategory WHERE id = '$id'");
+        $_SESSION['delmsg'] = "SubCategory deleted !!";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -48,19 +54,19 @@ if(isset($_GET['del'])) {
                             <h3>Sub Category</h3>
                         </div>
                         <div class="module-body">
-                            <?php if(isset($_SESSION['msg'])): ?>
+                            <?php if(!empty($_SESSION['msg'])): ?>
                                 <div class="alert alert-success">
                                     <button type="button" class="close" data-dismiss="alert">×</button>
                                     <strong>Well done!</strong> <?php echo htmlentities((string)$_SESSION['msg']); ?>
-                                    <?php unset($_SESSION['msg']); ?>
+                                    <?php $_SESSION['msg'] = ''; ?>
                                 </div>
                             <?php endif; ?>
 
-                            <?php if(isset($_SESSION['delmsg'])): ?>
+                            <?php if(!empty($_SESSION['delmsg'])): ?>
                                 <div class="alert alert-error">
                                     <button type="button" class="close" data-dismiss="alert">×</button>
                                     <strong>Oh snap!</strong> <?php echo htmlentities((string)$_SESSION['delmsg']); ?>
-                                    <?php unset($_SESSION['delmsg']); ?>
+                                    <?php $_SESSION['delmsg'] = ''; ?>
                                 </div>
                             <?php endif; ?>
 
@@ -75,8 +81,8 @@ if(isset($_GET['del'])) {
                                             <?php 
                                             $query = mysqli_query($con, "SELECT * FROM category");
                                             while($row = mysqli_fetch_array($query)): ?>
-                                                <option value="<?php echo htmlentities($row['id']); ?>">
-                                                    <?php echo htmlentities($row['categoryName']); ?>
+                                                <option value="<?php echo htmlentities($row['id'] ?? ''); ?>">
+                                                    <?php echo htmlentities($row['categoryName'] ?? ''); ?>
                                                 </option>
                                             <?php endwhile; ?>
                                         </select>
@@ -121,14 +127,14 @@ if(isset($_GET['del'])) {
                                     $cnt = 1;
                                     while($row = mysqli_fetch_array($query)): ?>                                    
                                         <tr>
-                                            <td><?php echo htmlentities((string)$cnt); ?></td>
-                                            <td><?php echo htmlentities($row['categoryName']); ?></td>
-                                            <td><?php echo htmlentities($row['subcategory']); ?></td>
-                                            <td><?php echo htmlentities($row['creationDate']); ?></td>
-                                            <td><?php echo htmlentities($row['updationDate']); ?></td>
+                                            <td><?php echo htmlentities((string)($cnt ?? '')); ?></td>
+                                            <td><?php echo htmlentities($row['categoryName'] ?? ''); ?></td>
+                                            <td><?php echo htmlentities($row['subcategory'] ?? ''); ?></td>
+                                            <td><?php echo htmlentities($row['creationDate'] ?? ''); ?></td>
+                                            <td><?php echo htmlentities($row['updationDate'] ?? ''); ?></td>
                                             <td>
-                                                <a href="edit-subcategory.php?id=<?php echo htmlentities($row['id']); ?>"><i class="icon-edit"></i></a>
-                                                <a href="subcategory.php?id=<?php echo htmlentities($row['id']); ?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a>
+                                                <a href="edit-subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>"><i class="icon-edit"></i></a>
+                                                <a href="subcategory.php?id=<?php echo htmlentities($row['id'] ?? ''); ?>&del=delete" onClick="return confirm('Are you sure you want to delete?')"><i class="icon-remove-sign"></i></a>
                                             </td>
                                         </tr>
                                     <?php $cnt++; endwhile; ?>
