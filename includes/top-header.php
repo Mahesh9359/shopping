@@ -19,7 +19,8 @@ session_start(); // Ensure session is started
                 <?php if (!isset($_SESSION['login']) || strlen($_SESSION['login']) == 0) { ?>
                     <li><a href="login.php"><i class="icon fa fa-sign-in"></i>Login</a></li>
                 <?php } else { ?>
-                    <li><a href="logout.php"><i class="icon fa fa-sign-out"></i>Logout</a></li>
+                    <li><a href="#" id="logout-btn"><i class="icon fa fa-sign-out"></i>Logout</a></li>
+
                 <?php } ?>	
                 </ul>
             </div><!-- /.cnt-account -->
@@ -28,7 +29,7 @@ session_start(); // Ensure session is started
                 <ul class="list-unstyled list-inline">
                     <li class="dropdown dropdown-small">
                         <a href="track-orders.php" class="dropdown-toggle"><span class="key">Track Order</span></a>
-                        <a href="/admin">Admin Login</a>
+                        <a href="admin">Admin Login</a>
                     </li>
                 </ul>
             </div>
@@ -37,3 +38,29 @@ session_start(); // Ensure session is started
         </div><!-- /.header-top-inner -->
     </div><!-- /.container -->
 </div><!-- /.header-top -->
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will be logged out.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, logout',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'logout.php';
+                }
+            });
+        });
+    }
+});
+</script>

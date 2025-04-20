@@ -8,15 +8,21 @@ header('location:login.php');
 }
 else{
 	if(isset($_POST['update']))
-	{
-		$name=$_POST['name'];
-		$contactno=$_POST['contactno'];
-		$query=mysqli_query($con,"update users set name='$name',contactno='$contactno' where id='".$_SESSION['id']."'");
-		if($query)
-		{
-echo "<script>alert('Your info has been updated');</script>";
-		}
-	}
+{
+    $name=$_POST['name'];
+    $contactno=$_POST['contactno'];
+    $query=mysqli_query($con,"update users set name='$name',contactno='$contactno' where id='".$_SESSION['id']."'");
+    if($query)
+    {
+        $_SESSION['update_success'] = "Your info has been updated";
+    }
+    else 
+    {
+        $_SESSION['update_error'] = "Error updating your information";
+    }
+    header("Location: my-account.php");
+    exit();
+}
 
 
 date_default_timezone_set('Asia/Kolkata');// change according timezone
@@ -25,17 +31,31 @@ $currentTime = date( 'd-m-Y h:i:s A', time () );
 
 if(isset($_POST['submit']))
 {
-$sql=mysqli_query($con,"SELECT password FROM  users where password='".md5($_POST['cpass'])."' && id='".$_SESSION['id']."'");
-$num=mysqli_fetch_array($sql);
-if($num>0)
-{
- $con=mysqli_query($con,"update students set password='".md5($_POST['newpass'])."', updationDate='$currentTime' where id='".$_SESSION['id']."'");
-echo "<script>alert('Password Changed Successfully !!');</script>";
-}
-else
-{
-	echo "<script>alert('Current Password not match !!');</script>";
-}
+    // Get the current password from database
+    $sql = mysqli_query($con, "SELECT password FROM users WHERE id='".$_SESSION['id']."'");
+    $user = mysqli_fetch_assoc($sql);
+    
+    // Verify current password
+    if(password_verify($_POST['cpass'], $user['password'])) 
+    {
+        // Hash the new password
+        $newPassword = password_hash($_POST['newpass'], PASSWORD_BCRYPT);
+        
+        // Update password
+        $updateQuery = mysqli_query($con, "UPDATE users SET password='$newPassword', updationDate='$currentTime' WHERE id='".$_SESSION['id']."'");
+        
+        if($updateQuery) {
+            $_SESSION['password_success'] = "Password Changed Successfully!";
+        } else {
+            $_SESSION['password_error'] = "Error updating password. Please try again.";
+        }
+    }
+    else
+    {
+        $_SESSION['password_error'] = "Current Password does not match!";
+    }
+    header("Location: my-account.php");
+    exit();
 }
 
 ?>
@@ -54,58 +74,69 @@ else
 	    <title>My Account</title>
 
 	    <!-- Bootstrap Core CSS -->
-	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-	    
+	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 	    <!-- Customizable CSS -->
-	    <link rel="stylesheet" href="/assets/css/main.css">
-	    <link rel="stylesheet" href="/assets/css/green.css">
-	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
+	    <link rel="stylesheet" href="assets/css/main.css">
+	    <link rel="stylesheet" href="assets/css/green.css">
+	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="assets/css/owl.transitions.css">
 		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
-		<link href="/assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="/assets/css/animate.min.css">
-		<link rel="stylesheet" href="/assets/css/rateit.css">
-		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+		<link href="assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="assets/css/animate.min.css">
+		<link rel="stylesheet" href="assets/css/rateit.css">
+		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
 
 		<!-- Demo Purpose Only. Should be removed in production -->
-		<link rel="stylesheet" href="/assets/css/config.css">
+		<link rel="stylesheet" href="assets/css/config.css">
 
-		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
-		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-		<link rel="shortcut icon" href="/assets/images/favicon.ico">
+		<link rel="shortcut icon" href="assets/images/favicon.ico">
 <script type="text/javascript">
-function valid()
-{
-if(document.chngpwd.cpass.value=="")
-{
-alert("Current Password Filed is Empty !!");
-document.chngpwd.cpass.focus();
-return false;
-}
-else if(document.chngpwd.newpass.value=="")
-{
-alert("New Password Filed is Empty !!");
-document.chngpwd.newpass.focus();
-return false;
-}
-else if(document.chngpwd.cnfpass.value=="")
-{
-alert("Confirm Password Filed is Empty !!");
-document.chngpwd.cnfpass.focus();
-return false;
-}
-else if(document.chngpwd.newpass.value!= document.chngpwd.cnfpass.value)
-{
-alert("Password and Confirm Password Field do not match  !!");
-document.chngpwd.cnfpass.focus();
-return false;
-}
-return true;
+function valid() {
+    if(document.chngpwd.cpass.value=="") {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Current Password Field is Empty!',
+        });
+        document.chngpwd.cpass.focus();
+        return false;
+    }
+    else if(document.chngpwd.newpass.value=="") {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'New Password Field is Empty!',
+        });
+        document.chngpwd.newpass.focus();
+        return false;
+    }
+    else if(document.chngpwd.cnfpass.value=="") {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Confirm Password Field is Empty!',
+        });
+        document.chngpwd.cnfpass.focus();
+        return false;
+    }
+    else if(document.chngpwd.newpass.value!= document.chngpwd.cnfpass.value) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Password and Confirm Password do not match!',
+        });
+        document.chngpwd.cnfpass.focus();
+        return false;
+    }
+    return true;
 }
 </script>
 
@@ -127,7 +158,7 @@ return true;
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="/">Home</a></li>
+				<li><a href="#">Home</a></li>
 				<li class='active'>Checkout</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -240,26 +271,27 @@ while($row=mysqli_fetch_array($query))
 			<?php include('includes/myaccount-sidebar.php');?>
 			</div><!-- /.row -->
 		</div><!-- /.checkout-box -->
-	<?php include('includes/brands-slider.php');?>
+	  
 
 </div>
 </div>
 <?php include('includes/footer.php');?>
-	<script src="/assets/js/jquery-1.11.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
 	
-	<script src="/assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
 	
-	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="/assets/js/owl.carousel.min.js"></script>
+	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="assets/js/owl.carousel.min.js"></script>
 	
-	<script src="/assets/js/echo.min.js"></script>
-	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="/assets/js/bootstrap-slider.min.js"></script>
-    <script src="/assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
-    <script src="/assets/js/bootstrap-select.min.js"></script>
-    <script src="/assets/js/wow.min.js"></script>
-	<script src="/assets/js/scripts.js"></script>
+	<script src="assets/js/echo.min.js"></script>
+	<script src="assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="assets/js/bootstrap-slider.min.js"></script>
+    <script src="assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+    <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+	<script src="assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	
@@ -278,6 +310,53 @@ while($row=mysqli_fetch_array($query))
 		   $('.show-theme-options').delay(2000).trigger('click');
 		});
 	</script>
+	<?php if (isset($_SESSION['update_success'])): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['update_success']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['update_success']); endif; ?>
+
+<?php if (isset($_SESSION['update_error'])): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '<?php echo $_SESSION['update_error']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['update_error']); endif; ?>
+
+<?php if (isset($_SESSION['password_success'])): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['password_success']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['password_success']); endif; ?>
+
+<?php if (isset($_SESSION['password_error'])): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '<?php echo $_SESSION['password_error']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['password_error']); endif; ?>
 </body>
 </html>
 <?php } ?>

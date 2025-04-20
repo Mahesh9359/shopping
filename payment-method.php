@@ -1,7 +1,6 @@
 <?php 
-// 🚫 Ensure this is the first line
 session_start();
-error_reporting(0);
+error_reporting(E_ALL); // Change from 0 to E_ALL during debugging
 include('includes/config.php');
 
 if(strlen($_SESSION['login'])==0) {   
@@ -23,10 +22,60 @@ if (!empty($_SESSION['cart'])) {
 }
 
 if (isset($_POST['submit'])) {
-    mysqli_query($con,"UPDATE orders SET paymentMethod='".$_POST['paymethod']."' WHERE userId='".$_SESSION['id']."' AND paymentMethod IS NULL");
-    unset($_SESSION['cart']);
-    header('location:order-history.php');
-    exit();
+    $userId = $_SESSION['id'];
+    $paymentMethod = mysqli_real_escape_string($con, $_POST['paymethod'] ?? 'COD');
+    
+    if (!empty($_SESSION['pending_order']['products'])) {
+        mysqli_begin_transaction($con);
+        
+        try {
+            // 1. Create parent order
+            $orderNumber = 'ORD' . str_replace('.', '', uniqid('', true));
+            $totalAmount = $_SESSION['pending_order']['total'];
+            
+            $stmt = $con->prepare("INSERT INTO orders 
+                (order_number, userId, paymentMethod, orderStatus, final_amount, is_grouped) 
+                VALUES (?, ?, ?, 'pending', ?, 1)");
+            $stmt->bind_param("sisi", $orderNumber, $userId, $paymentMethod, $totalAmount);
+            $stmt->execute();
+            $parentOrderId = $con->insert_id;
+
+            // 2. Insert items into order_items table
+            foreach ($_SESSION['pending_order']['products'] as $productId => $item) {
+                $productId = intval($productId);
+                $qty = intval($item['quantity']);
+                $price = floatval($item['price']);
+                $shipping = floatval($item['shipping'] ?? 0.0);
+                
+                $stmt = $con->prepare("INSERT INTO order_items 
+                    (orderId, productId, quantity, price, shippingCharge) 
+                    VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("iiidd", 
+                    $parentOrderId, 
+                    $productId, 
+                    $qty, 
+                    $price, 
+                    $shipping
+                );
+                $stmt->execute();
+            }
+
+            mysqli_commit($con);
+            
+            // Clear session
+            unset($_SESSION['cart']);
+            unset($_SESSION['pending_order']);
+        
+            header('location:order-history.php?success=Order placed successfully!');
+            exit();
+            
+        } catch (Exception $e) {
+            mysqli_rollback($con);
+            error_log("Order Error: " . $e->getMessage());
+            header('location:my-cart.php?error=Order failed. Please try again.');
+            exit();
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -103,7 +152,8 @@ if (isset($_POST['submit'])) {
     </div>
 
     <form method="post">
-        
+    <input type="hidden" name="paymethod" value="COD">
+
         <button type="submit" name="submit" class="btn btn-primary mt-4 btn-submit">Cash on Delivery</button><br><br>
         <button type="button" id="rzp-button" class="btn btn-success mt-2 btn-submit">Pay with Razorpay</button>
     </form>

@@ -14,8 +14,9 @@ if (!isset($_SESSION['login_attempts'])) {
     $_SESSION['last_login_attempt'] = 0;
 }
 
-// ========== USER REGISTRATION ==========
-if (isset($_POST['submit'])) {
+// Code user Registration
+// Code user Registration
+if(isset($_POST['submit'])) {
     // CSRF validation
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF token validation failed");
@@ -26,113 +27,141 @@ if (isset($_POST['submit'])) {
     $contactno = mysqli_real_escape_string($con, $_POST['contactno']);
     $password = $_POST['password'];
     $confirmpassword = $_POST['confirmpassword'];
-
-    $errors = [];
-
-    if (empty($name) || !preg_match("/^[a-zA-Z ]*$/", $name)) {
-        $errors[] = "Valid full name is required";
+    
+    // Validation
+    $errors = array();
+    
+    // Name validation
+    if(empty($name)) {
+        $errors[] = "Full name is required";
+    } elseif(!preg_match("/^[a-zA-Z ]*$/", $name)) {
+        $errors[] = "Only letters and white space allowed in name";
     }
-
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Valid email is required";
+    
+    // Email validation
+    if(empty($email)) {
+        $errors[] = "Email is required";
+    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format";
     } else {
+        // Check if email already exists
         $check_email = mysqli_query($con, "SELECT email FROM users WHERE email='$email'");
-        if (mysqli_num_rows($check_email) > 0) {
+        if(mysqli_num_rows($check_email) > 0) {
             $errors[] = "Email already exists";
         }
     }
-
-    if (empty($contactno) || !preg_match("/^[0-9]{10}$/", $contactno)) {
-        $errors[] = "Valid 10-digit contact number is required";
+    
+    // Contact number validation
+    if(empty($contactno)) {
+        $errors[] = "Contact number is required";
+    } elseif(!preg_match("/^[0-9]{10}$/", $contactno)) {
+        $errors[] = "Contact number must be 10 digits";
     }
-
-    if (empty($password) || strlen($password) < 8 || !preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/", $password)) {
-        $errors[] = "Password must be at least 8 characters with a number, uppercase and lowercase letter";
-    }
-
-    if ($password !== $confirmpassword) {
+    
+    // Password validation
+    if(empty($password)) {
+        $errors[] = "Password is required";
+    } elseif(strlen($password) < 8) {
+        $errors[] = "Password must be at least 8 characters";
+    } elseif(!preg_match("/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/", $password)) {
+        $errors[] = "Password must contain at least one number, one uppercase and one lowercase letter";
+    } elseif($password != $confirmpassword) {
         $errors[] = "Passwords do not match";
     }
-
-    if (empty($errors)) {
+    
+    // If no errors, proceed with registration
+    if(empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         $query = mysqli_query($con, "INSERT INTO users(name,email,contactno,password) VALUES('$name','$email','$contactno','$hashed_password')");
-        if ($query) {
-            $_SESSION['successmsg'] = "You are successfully registered.";
-            header("Location: login.php");
-            exit();
+        
+        if($query) {
+            $_SESSION['registration_success'] = "You are successfully registered";
         } else {
-            $errors[] = "Something went wrong. Please try again.";
+            $_SESSION['registration_error'] = "Something went wrong. Please try again.";
         }
+        header("Location: login.php");
+        exit();
     }
-
-    if (!empty($errors)) {
-        $_SESSION['errmsg'] = implode("<br>", $errors);
+    
+    // Display errors if any
+    if(!empty($errors)) {
+        $_SESSION['registration_error'] = implode("<br>", $errors);
         header("Location: login.php");
         exit();
     }
 }
 
-// ========== USER LOGIN ==========
-if (isset($_POST['login'])) {
+// Code for User login
+if(isset($_POST['login'])) {
+    // CSRF validation
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF token validation failed");
     }
 
-    // Rate limiting
+    // Rate limiting check
     if ($_SESSION['login_attempts'] > 5 && (time() - $_SESSION['last_login_attempt']) < 300) {
-        $_SESSION['errmsg'] = "Too many login attempts. Try again in 5 minutes.";
+        $_SESSION['errmsg'] = "Too many login attempts. Please try again in 5 minutes.";
         header("Location: login.php");
         exit();
     }
 
     $email = mysqli_real_escape_string($con, $_POST['email']);
     $password = $_POST['password'];
-
-    $errors = [];
-
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Valid email is required";
+    
+    // Validation
+    $errors = array();
+    
+    if(empty($email)) {
+        $errors[] = "Email is required";
+    } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format";
     }
-
-    if (empty($password)) {
+    
+    if(empty($password)) {
         $errors[] = "Password is required";
     }
-
-    if (empty($errors)) {
+    
+    if(empty($errors)) {
         $query = mysqli_query($con, "SELECT * FROM users WHERE email='$email'");
-        $user = mysqli_fetch_array($query);
-
-        if ($user && password_verify($password, $user['password'])) {
+        $num = mysqli_fetch_array($query);
+        
+        if($num > 0 && password_verify($password, $num['password'])) {
+            // Reset login attempts on successful login
             $_SESSION['login_attempts'] = 0;
-
+            
             $_SESSION['login'] = $email;
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['username'] = $user['name'];
-
-            $ip = $_SERVER['REMOTE_ADDR'];
+            $_SESSION['id'] = $num['id'];
+            $_SESSION['username'] = $num['name'];
+            $uip = $_SERVER['REMOTE_ADDR'];
             $status = 1;
-            mysqli_query($con, "INSERT INTO userlog(userEmail, userip, status) VALUES('$email', '$ip', '$status')");
-
-            header("Location: my-cart.php");
-            exit();
-        } else {
-            $_SESSION['login_attempts']++;
-            $_SESSION['last_login_attempt'] = time();
-
-            $ip = $_SERVER['REMOTE_ADDR'];
-            $status = 0;
-            mysqli_query($con, "INSERT INTO userlog(userEmail, userip, status) VALUES('$email', '$ip', '$status')");
-
-            $_SESSION['errmsg'] = "Invalid email or password.";
+            
+            mysqli_query($con, "INSERT INTO userlog(userEmail,userip,status) VALUES('".$_SESSION['login']."','$uip','$status')");
+        
+            // Set a session variable to show success message
+            $_SESSION['login_success'] = "Login successful! Redirecting...";
+        
             header("Location: login.php");
             exit();
         }
+        
+         else {
+            $errors[] = "Invalid email or password";
+            $_SESSION['login_attempts']++;
+            $_SESSION['last_login_attempt'] = time();
+        }
     }
-
-    if (!empty($errors)) {
+    
+    // If errors exist
+    if(!empty($errors)) {
         $_SESSION['errmsg'] = implode("<br>", $errors);
-        header("Location: login.php");
+        $extra = "login.php";
+        $uip = $_SERVER['REMOTE_ADDR'];
+        $status = 0;
+        mysqli_query($con, "INSERT INTO userlog(userEmail,userip,status) VALUES('$email','$uip','$status')");
+        
+        $host = $_SERVER['HTTP_HOST'];
+        $uri = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        header("location:http://$host$uri/$extra");
         exit();
     }
 }
@@ -153,42 +182,47 @@ if (isset($_POST['login'])) {
 	    <title>Shopping Portal | Signin | Signup</title>
 
 	    <!-- Bootstrap Core CSS -->
-	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	    
 	    <!-- Customizable CSS -->
-	    <link rel="stylesheet" href="/assets/css/main.css">
-	    <link rel="stylesheet" href="/assets/css/green.css">
-	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
+	    <link rel="stylesheet" href="assets/css/main.css">
+	    <link rel="stylesheet" href="assets/css/green.css">
+	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="assets/css/owl.transitions.css">
 		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
-		<link href="/assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="/assets/css/animate.min.css">
-		<link rel="stylesheet" href="/assets/css/rateit.css">
-		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+		<link href="assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="assets/css/animate.min.css">
+		<link rel="stylesheet" href="assets/css/rateit.css">
+		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
 
 		<!-- Demo Purpose Only. Should be removed in production -->
-		<link rel="stylesheet" href="/assets/css/config.css">
+		<link rel="stylesheet" href="assets/css/config.css">
 
-		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
 		<!-- Demo Purpose Only. Should be removed in production : END -->
 
 		
 		<!-- Icons/Glyphs -->
-		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 
         <!-- Fonts --> 
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 		
 		<!-- Favicon -->
-		<link rel="shortcut icon" href="/assets/images/favicon.ico">
+		<link rel="shortcut icon" href="assets/images/favicon.ico">
 <script type="text/javascript">
 function valid() {
     if(document.register.password.value != document.register.confirmpassword.value) {
-        alert("Password and Confirm Password Field do not match!!");
+        Swal.fire({
+    icon: 'error',
+    title: 'Oops...',
+    text: 'Password and Confirm Password Field do not match!',
+});
+
         document.register.confirmpassword.focus();
         return false;
     }
@@ -231,7 +265,7 @@ function userAvailability() {
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="/home.html">Home</a></li>
+				<li><a href="home.html">Home</a></li>
 				<li class='active'>Authentication</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -248,14 +282,6 @@ function userAvailability() {
 	<p class="">Hello, Welcome to your account.</p>
 	<form class="register-form outer-top-xs" method="post">
 	<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-	<span style="color:red;">
-	<?php
-	if(isset($_SESSION['errmsg'])) {
-		echo htmlentities($_SESSION['errmsg']);
-		unset($_SESSION['errmsg']);
-	}
-	?>
-	</span>
 		<div class="form-group">
 		    <label class="info-title" for="exampleInputEmail1">Email Address <span>*</span></label>
 		    <input type="email" name="email" class="form-control unicase-form-control text-input" id="exampleInputEmail1" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
@@ -265,7 +291,7 @@ function userAvailability() {
 		    <input type="password" name="password" class="form-control unicase-form-control text-input" id="exampleInputPassword1" required minlength="8">
 		</div>
 		<div class="radio outer-xs">
-		  	<a href="/forgot-password.php" class="forgot-password pull-right">Forgot your Password?</a>
+		  	<a href="forgot-password.php" class="forgot-password pull-right">Forgot your Password?</a>
 		</div>
 	  	<button type="submit" class="btn-upper btn btn-primary checkout-page-button" name="login">Login</button>
 	</form>					
@@ -321,25 +347,25 @@ function userAvailability() {
 </div>	
 <!-- create a new account -->			</div><!-- /.row -->
 		</div>
-<?php include('includes/brands-slider.php');?>
+  
 </div>
 </div>
 <?php include('includes/footer.php');?>
-	<script src="/assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
 	
-	<script src="/assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
 	
-	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="/assets/js/owl.carousel.min.js"></script>
+	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="assets/js/owl.carousel.min.js"></script>
 	
-	<script src="/assets/js/echo.min.js"></script>
-	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="/assets/js/bootstrap-slider.min.js"></script>
-    <script src="/assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
-    <script src="/assets/js/bootstrap-select.min.js"></script>
-    <script src="/assets/js/wow.min.js"></script>
-	<script src="/assets/js/scripts.js"></script>
+	<script src="assets/js/echo.min.js"></script>
+	<script src="assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="assets/js/bootstrap-slider.min.js"></script>
+    <script src="assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+    <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+	<script src="assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	
@@ -358,6 +384,60 @@ function userAvailability() {
 		   $('.show-theme-options').delay(2000).trigger('click');
 		});
 	</script>
+    <!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php if (isset($_SESSION['login_success']) && $_SESSION['login_success'] != ""): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['login_success']; ?>',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+    }).then(() => {
+        window.location.href = 'my-cart.php'; // Redirect after closing the modal
+    });
+</script>
+<?php unset($_SESSION['login_success']); endif; ?>
+
+
+
+<?php if (isset($_SESSION['errmsg']) && $_SESSION['errmsg'] != ""): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        html: `<?php echo $_SESSION['errmsg']; ?>`,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['errmsg']); endif; ?>
+<?php if (isset($_SESSION['registration_success']) && $_SESSION['registration_success'] != ""): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['registration_success']; ?>',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+    }).then(() => {
+        window.location.href = 'login.php'; // Redirect after closing the modal
+    });
+</script>
+<?php unset($_SESSION['registration_success']); endif; ?>
+
+<?php if (isset($_SESSION['registration_error']) && $_SESSION['registration_error'] != ""): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Registration Failed',
+        html: '<?php echo $_SESSION['registration_error']; ?>',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6'
+    });
+</script>
+<?php unset($_SESSION['registration_error']); endif; ?>
 	<!-- For demo purposes – can be removed on production : End -->
 </body>
 </html>

@@ -211,37 +211,52 @@ if(strlen($_SESSION['alogin'])==0) {
                                     <tbody>
                                         <?php 
                                         $st = 'Delivered';
-                                        $query = mysqli_query($con, "SELECT 
-                                            users.name AS username,
-                                            users.email AS useremail,
-                                            users.contactno AS usercontact,
-                                            CONCAT(users.shippingAddress, ', ', users.shippingCity, ', ', users.shippingState, ' - ', users.shippingPincode) AS fulladdress,
-                                            products.productName AS productname,
-                                            products.shippingCharge AS shippingcharge,
-                                            orders.quantity AS quantity,
-                                            orders.orderDate AS orderdate,
-                                            products.productPrice AS productprice,
-                                            orders.id AS id
-                                            FROM orders 
-                                            JOIN users ON orders.userId = users.id 
-                                            JOIN products ON products.id = orders.productId 
-                                            WHERE orders.orderStatus = '$st'");
+// Update the query to:
+$query = mysqli_query($con, "SELECT 
+    o.id, o.order_number, o.orderDate, o.final_amount,
+    u.name AS username,
+    u.email AS useremail,
+    u.contactno AS usercontact,
+    u.shippingAddress, 
+    u.shippingCity, 
+    u.shippingState, 
+    u.shippingPincode,
+    p.productName,
+    oi.quantity,
+    p.productPrice,
+    oi.shippingCharge
+FROM orders o
+JOIN users u ON o.userId = u.id
+JOIN order_items oi ON o.id = oi.orderId
+JOIN products p ON oi.productId = p.id
+WHERE o.orderStatus = 'Delivered'
+ORDER BY o.orderDate DESC");
 
                                         $cnt = 1;
                                         while($row = mysqli_fetch_array($query)) { 
-                                            $amount = $row['quantity'] * $row['productprice'] + $row['shippingcharge'];
+                                            $amount = $row['quantity'] * $row['productPrice'] + $row['shippingCharge'];
                                         ?>										
                                         <tr>
                                             <td><?php echo htmlentities($cnt); ?></td>
                                             <td><?php echo htmlentities($row['username']); ?></td>
                                             <td><?php echo htmlentities($row['useremail']); ?> / <?php echo htmlentities($row['usercontact']); ?></td>
-                                            <td><?php echo htmlentities($row['fulladdress']); ?></td>
-                                            <td><?php echo htmlentities($row['productname']); ?></td>
+                                            <td>
+<?php 
+    $addressParts = [
+        $row['shippingAddress'] ?? '',
+        $row['shippingCity'] ?? '',
+        $row['shippingState'] ?? '',
+        $row['shippingPincode'] ?? ''
+    ];
+    echo htmlentities(implode(', ', array_filter($addressParts))); 
+?>
+</td>
+                                            <td><?php echo htmlentities($row['productName']); ?></td>
                                             <td><?php echo htmlentities($row['quantity']); ?></td>
                                             <td>₹<?php echo number_format($amount, 2); ?></td>
-                                            <td><?php echo htmlentities($row['orderdate']); ?></td>
+                                            <td><?php echo htmlentities($row['orderDate']); ?></td>
                                             <td>
-                                                <a href="/updateorder.php?oid=<?php echo htmlentities($row['id']); ?>" title="Update order" target="_blank">
+                                                <a href="updateorder.php?oid=<?php echo htmlentities($row['id']); ?>" title="Update order" target="_blank">
                                                     <i class="icon-edit"></i>
                                                 </a>
                                             </td>

@@ -63,29 +63,25 @@ $currentTime = date('d-m-Y h:i:s A', time());
                             <br />
 
                             <?php
-                            $query = mysqli_query($con, "SELECT 
-    users.name AS username,
-    users.email AS useremail,
-    users.contactno AS usercontact,
-    CONCAT(
-        COALESCE(users.shippingAddress, 'N/A'), ', ', 
-        COALESCE(users.shippingCity, 'N/A'), ', ', 
-        COALESCE(users.shippingState, 'N/A'), '-', 
-        COALESCE(users.shippingPincode, '000000')
-    ) AS fulladdress,
-    products.productName AS productname,
-    products.shippingCharge AS shippingcharge,
-    orders.quantity AS quantity,
-    orders.orderDate AS orderdate,
-    products.productPrice AS productprice,
-    orders.id AS id,
-    orders.orderStatus AS status
-FROM orders 
-JOIN users ON orders.userId = users.id 
-JOIN products ON products.id = orders.productId 
-WHERE orders.orderStatus != 'Delivered' OR orders.orderStatus IS NULL
-ORDER BY orders.orderDate DESC
-");
+$query = mysqli_query($con, "SELECT 
+o.id, o.order_number, o.orderDate, o.final_amount, o.orderStatus,
+u.name AS username,
+u.email AS useremail,
+u.contactno AS usercontact,
+u.shippingAddress, 
+u.shippingCity, 
+u.shippingState, 
+u.shippingPincode,
+p.productName,
+oi.quantity,
+p.productPrice,
+oi.shippingCharge
+FROM orders o
+JOIN users u ON o.userId = u.id
+JOIN order_items oi ON o.id = oi.orderId
+JOIN products p ON oi.productId = p.id
+WHERE o.orderStatus = 'Pending'
+ORDER BY o.orderDate DESC");
                             
                             if(mysqli_num_rows($query) > 0) { ?>
                                 <div class="table-responsive">
@@ -108,20 +104,20 @@ ORDER BY orders.orderDate DESC
                                             <?php 
                                             $cnt = 1;
                                             while($row = mysqli_fetch_array($query)) {
-                                                $amount = $row['quantity'] * $row['productprice'] + $row['shippingcharge'];
+                                                $amount = $row['quantity'] * $row['productPrice'] + $row['shippingCharge'];
                                             ?>
                                                 <tr>
                                                     <td><?php echo $cnt; ?></td>
                                                     <td><?php echo htmlentities($row['username']); ?></td>
                                                     <td><?php echo htmlentities($row['useremail']); ?><br><?php echo htmlentities($row['usercontact']); ?></td>
                                                     <td><?php echo !empty($row['fulladdress']) ? htmlentities($row['fulladdress']) : 'N/A'; ?></td>
-                                                    <td><?php echo htmlentities($row['productname']); ?></td>
+                                                    <td><?php echo htmlentities($row['productName']); ?></td>
                                                     <td><?php echo htmlentities($row['quantity']); ?></td>
                                                     <td>₹<?php echo number_format($amount, 2); ?></td>
-                                                    <td><?php echo htmlentities($row['orderdate']); ?></td>
-                                                    <td><?php echo $row['status'] ? htmlentities($row['status']) : 'Pending'; ?></td>
+                                                    <td><?php echo htmlentities($row['orderDate']); ?></td>
+                                                    <td><?php echo $row['orderStatus'] ? htmlentities($row['orderStatus']) : 'Pending'; ?></td>
                                                     <td>
-                                                        <a href="/updateorder.php?oid=<?php echo $row['id']; ?>" title="Update order">
+                                                        <a href="updateorder.php?oid=<?php echo $row['id']; ?>" title="Update order">
                                                             <i class="icon-edit"></i>
                                                         </a>
                                                     </td>

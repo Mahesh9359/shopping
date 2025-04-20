@@ -2,11 +2,10 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if(!isset($_SESSION['login']) || strlen($_SESSION['login']) == 0) {
-    header('Location: login.php');
+if(strlen($_SESSION['login']) == 0) {   
+    header('location:login.php');
     exit;
 }
-
 
 // Code for Product deletion from wishlist
 if(isset($_GET['del'])) {
@@ -29,8 +28,10 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                 "quantity" => 1, 
                 "price" => $row_p['productPrice']
             );    
-            header('location:my-wishlist.php');
-            exit;
+            $_SESSION['toast_message'] = "Item added to cart!";
+header('location:my-wishlist.php');
+exit;
+
         } else {
             $message = "Product ID is invalid";
         }
@@ -50,18 +51,34 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
     <title>My Wishlist</title>
     
     <!-- CSS -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="stylesheet" href="/assets/css/green.css">
-    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-    <link rel="stylesheet" href="/assets/css/owl.transitions.css">
-    <link href="/assets/css/lightbox.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/animate.min.css">
-    <link rel="stylesheet" href="/assets/css/rateit.css">
-    <link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
-    <link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/green.css">
+    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="assets/css/owl.transitions.css">
+    <link href="assets/css/lightbox.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/rateit.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <style>
+        .table .product-name a {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.table .price {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.table td {
+    vertical-align: middle !important;
+}
+</style>
 </head>
 <body class="cnt-home">
     <header class="header-style-1">
@@ -74,7 +91,7 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
         <div class="container">
             <div class="breadcrumb-inner">
                 <ul class="list-inline list-unstyled">
-                    <li><a href="/index.php">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li class='active'>Wishlist</li>
                 </ul>
             </div>
@@ -107,12 +124,13 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                                     ?>
                                     <tr>
                                         <td class="col-md-2">
-                                            <img src="admin/productimages/<?php echo htmlentities($row['pid']);?>/<?php echo htmlentities($row['pimage']);?>" 
-                                                alt="<?php echo htmlentities($row['pname']);?>" width="60" height="100">
+                                        <img src="admin/productimages/<?php echo htmlentities($row['pid']);?>/<?php echo htmlentities($row['pimage']);?>" 
+     alt="<?php echo htmlentities($row['pname']);?>" width="60" height="80">
+
                                         </td>
                                         <td class="col-md-6">
                                             <div class="product-name">
-                                                <a href="/product-details.php?pid=<?php echo htmlentities($row['pid']);?>">
+                                                <a href="product-details.php?pid=<?php echo htmlentities($row['pid']);?>">
                                                     <?php echo htmlentities($row['pname']);?>
                                                 </a>
                                             </div>
@@ -135,13 +153,14 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                                             </div>
                                         </td>
                                         <td class="col-md-2">
-                                            <a href="/my-wishlist.php?action=add&id=<?php echo $row['pid']; ?>" 
+                                            <a href="my-wishlist.php?action=add&id=<?php echo $row['pid']; ?>" 
                                                class="btn-upper btn btn-primary">Add to cart</a>
                                         </td>
                                         <td class="col-md-2 close-btn">
-                                            <a href="/my-wishlist.php?del=<?php echo htmlentities($row['wid']);?>" 
-                                               onClick="return confirm('Are you sure you  want to delete?')" 
-                                               class=""><i class="fa fa-times"></i></a>
+                                        <a href="#" class="delete-wishlist" data-id="<?php echo htmlentities($row['wid']); ?>">
+    <i class="fa fa-times text-danger"></i>
+</a>
+
                                         </td>
                                     </tr>
                                     <?php 
@@ -160,24 +179,60 @@ if(isset($_GET['action']) && $_GET['action'] == "add") {
                     </div>
                 </div>
             </div>
-            <?php include('includes/brands-slider.php');?>
+              
         </div>
     </div>
 
     <?php include('includes/footer.php');?>
 
     <!-- JavaScript -->
-    <script src="/assets/js/jquery-1.11.1.min.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-    <script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-    <script src="/assets/js/owl.carousel.min.js"></script>
-    <script src="/assets/js/echo.min.js"></script>
-    <script src="/assets/js/jquery.easing-1.3.min.js"></script>
-    <script src="/assets/js/bootstrap-slider.min.js"></script>
-    <script src="/assets/js/jquery.rateit.min.js"></script>
-    <script src="/assets/js/lightbox.min.js"></script>
-    <script src="/assets/js/bootstrap-select.min.js"></script>
-    <script src="/assets/js/wow.min.js"></script>
-    <script src="/assets/js/scripts.js"></script>
+    <script src="assets/js/jquery-1.11.1.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/echo.min.js"></script>
+    <script src="assets/js/jquery.easing-1.3.min.js"></script>
+    <script src="assets/js/bootstrap-slider.min.js"></script>
+    <script src="assets/js/jquery.rateit.min.js"></script>
+    <script src="assets/js/lightbox.min.js"></script>
+    <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <!-- Add SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-wishlist').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const wid = this.getAttribute('data-id');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to undo this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `my-wishlist.php?del=${wid}`;
+                }
+            });
+        });
+    });
+</script>
+<?php if(isset($_SESSION['toast_message'])) { ?>
+<script>
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '<?php echo $_SESSION['toast_message']; ?>',
+        showConfirmButton: false,
+        timer: 2000
+    });
+</script>
+<?php unset($_SESSION['toast_message']); } ?>
+
 </body>
 </html>

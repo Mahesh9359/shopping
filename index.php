@@ -2,25 +2,39 @@
 session_start();
 error_reporting(0);
 include('includes/config.php');
-if(isset($_GET['action']) && $_GET['action']=="add"){
-	$id=intval($_GET['id']);
-	if(isset($_SESSION['cart'][$id])){
-		$_SESSION['cart'][$id]['quantity']++;
-	}else{
-		$sql_p="SELECT * FROM products WHERE id={$id}";
-		$query_p=mysqli_query($con,$sql_p);
-		if(mysqli_num_rows($query_p)!=0){
-			$row_p=mysqli_fetch_array($query_p);
-			$_SESSION['cart'][$row_p['id']]=array("quantity" => 1, "price" => $row_p['productPrice']);
-		
-		}else{
-			$message="Product ID is invalid";
-		}
-	}
-		
+
+// Initialize cart if not set
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = array();
 }
 
-
+// Handle wishlist additions
+if(isset($_GET['action']) && $_GET['action']=="wishlist" && isset($_GET['pid'])){
+    $pid = intval($_GET['pid']);
+    
+    if(strlen($_SESSION['login']) == 0) {   
+        $response = [
+            'error' => 'Please login to add items to wishlist',
+            'redirect' => 'login.php'
+        ];
+    } else {
+        $userId = $_SESSION['id'];
+        $check = mysqli_query($con, "SELECT * FROM wishlist WHERE userId='$userId' AND productId='$pid'");
+        
+        if(mysqli_num_rows($check) == 0) {
+            mysqli_query($con, "INSERT INTO wishlist(userId, productId) VALUES('$userId','$pid')");
+            $response = ['success' => true];
+        } else {
+            $response = ['error' => 'Product already in wishlist'];
+        }
+    }
+    
+    if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +53,7 @@ if(isset($_GET['action']) && $_GET['action']=="add"){
 
 	    <!-- Bootstrap Core CSS -->
 	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	    
+	    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 	    <!-- Customizable CSS -->
 	    <link rel="stylesheet" href="assets/css/main.css">
 	    <link rel="stylesheet" href="assets/css/orange.css">
@@ -60,11 +74,141 @@ if(isset($_GET['action']) && $_GET['action']=="add"){
 		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
 		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
 		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
+		<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 		
 		<!-- Favicon -->
 		<link rel="shortcut icon" href="assets/images/favicon.ico">
+		<style>
+			.add-to-wishlist-btn {
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    width: 44px;
+    font-size: 16px;
+}
+.list-unstyled
+{
+	display:flex;
+	gap:10px;
+}
+/* Add this to your existing styles */
+.product {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
+.product-info {
+    flex: 1;
+    min-height: 150px; /* Adjust this value as needed */
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info .name {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+    min-height: 40px; /* Adjust based on your font size */
+}
+
+.product-price {
+    margin-top: auto; /* Pushes price to bottom */
+}
+
+.cart {
+    margin-top: 10px;
+}
+/* For the smaller product cards in FOODS section */
+.product-micro .product-info {
+    min-height: 120px; /* Slightly smaller for compact layout */
+}
+
+.product-micro .name {
+    min-height: 36px;
+    font-size: 14px; /* Slightly smaller font */
+}
+/* Add this to your existing styles */
+.item-carousel {
+    padding: 0 10px; /* Adds space between cards */
+    margin-bottom: 20px; /* Space below each card */
+}
+
+.products {
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px; /* Inner spacing */
+    height: 100%; /* Ensures consistent height */
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.products:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Subtle hover effect */
+    transform: translateY(-5px); /* Slight lift on hover */
+}
+/* Product info section */
+.product-info {
+    padding: 10px 0;
+}
+
+/* Product name styling */
+.product-info .name {
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 5px 0;
+    height: 40px; /* Fixed height for 2 lines */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Price styling */
+.product-price {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-price .price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #336699;
+}
+
+.product-price .price-before-discount {
+    font-size: 12px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Action buttons */
+.cart .action {
+    margin-top: 10px;
+}
+
+/* Rating stars */
+.rating {
+    margin: 5px 0;
+    color: #ffb503; /* Star color */
+}
+
+/* Owl Carousel adjustments */
+.owl-carousel .owl-stage {
+    display: flex;
+    padding: 10px 0;
+}
+
+.owl-carousel .owl-item {
+    padding: 0 5px;
+}
+</style>
 	</head>
     <body class="cnt-home">
 	
@@ -215,12 +359,27 @@ while ($row=mysqli_fetch_array($ret))
 			</div><!-- /.product-price -->
 			
 		</div><!-- /.product-info -->
-		<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-					
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+  <div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn " type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i>  &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 			</div><!-- /.product -->
       
 			</div><!-- /.products -->
@@ -272,11 +431,27 @@ while ($row=mysqli_fetch_array($ret))
 									
 			</div><!-- /.product-price -->
 		</div><!-- /.product-info -->
-				<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+  <div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn" type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i> &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 			</div><!-- /.product -->
 			</div><!-- /.products -->
 		</div><!-- /.item -->
@@ -312,11 +487,27 @@ while ($row=mysqli_fetch_array($ret))
 										     <span class="price-before-discount">Rs.<?php echo htmlentities($row['productPriceBeforeDiscount']);?></span>					
 			</div>
 		</div>
-				<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+<div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn" type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i> &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 			</div>
 			</div>
 		</div>
@@ -356,11 +547,27 @@ while ($row=mysqli_fetch_array($ret))
 										     <span class="price-before-discount">Rs.<?php echo htmlentities($row['productPriceBeforeDiscount']);?></span>					
 			</div>
 		</div>
-				<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+  <div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn" type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i> &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 			</div>
 			</div>
 		</div>
@@ -395,11 +602,27 @@ while ($row=mysqli_fetch_array($ret))
 										     <span class="price-before-discount">Rs.<?php echo htmlentities($row['productPriceBeforeDiscount']);?></span>						
 			</div>	
 		</div>
-				<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+  <div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn" type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i> &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 			</div>
 			</div>
 		</div>
@@ -445,11 +668,27 @@ while ($row=mysqli_fetch_array($ret))
 													Rs. <?php echo htmlentities($row['productPrice']);?>
 												</span>
 											</div><!-- /.product-price -->
-										<?php if($row['productAvailability']=='In Stock'){?>
-					<div class="action"><a href="index.php?page=product&action=add&id=<?php echo $row['id']; ?>" class="lnk btn btn-primary">Add to Cart</a></div>
-				<?php } else {?>
-						<div class="action" style="color:red">Out of Stock</div>
-					<?php } ?>
+									  <div class="cart clearfix animate-effect">
+    <div class="action">
+        <ul class="list-unstyled">
+            <li class="add-cart-button btn-group">
+                <?php if($row['productAvailability'] == 'In Stock'){ ?>
+                <button class="btn btn-primary add-to-cart-btn" type="button" style="text-transform: none;" data-product-id="<?php echo $row['id']; ?>">
+                    <i class="fa fa-shopping-cart"></i> &nbsp;Add to cart
+                </button>
+                <?php } else { ?>
+                <div class="action" style="color:red">Out of Stock</div>
+                <?php } ?>
+            </li>
+            <li class="add-cart-button btn-group">
+    <button class="btn btn-primary add-to-wishlist-btn" type="button" title="Add to wishlist" data-product-id="<?php echo $row['id']; ?>">
+        <i class="fa fa-heart"></i>
+    </button>
+</li>
+
+        </ul>
+    </div>
+</div>
 										</div>
 									</div><!-- /.col -->
 								</div><!-- /.product-micro-row -->
@@ -467,6 +706,7 @@ while ($row=mysqli_fetch_array($ret))
 </div>
 </div>
 <?php include('includes/footer.php');?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="assets/js/jquery-1.11.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
 	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
@@ -482,23 +722,141 @@ while ($row=mysqli_fetch_array($ret))
 	<!-- For demo purposes – can be removed on production -->
 	<script src="switchstylesheet/switchstylesheet.js"></script>
 	<script>
-		$(document).ready(function(){ 
-			$(".changecolor").switchstylesheet( { seperator:"color"} );
-			$('.show-theme-options').click(function(){
-				$(this).parent().toggleClass('open');
-				return false;
-			});
-		});
-
 		$(window).bind("load", function() {
 		   $('.show-theme-options').delay(2000).trigger('click');
 		});
 	</script>
 	<!-- For demo purposes – can be removed on production : End -->
+<script>
+$(document).ready(function() {
+    // Handle add to cart button clicks
+    $('.add-to-cart-btn').click(function(e) {
+        e.preventDefault();
+        var productId = $(this).data('product-id');
+        var button = $(this);
+        
+        // Show loading state
+        button.html('<i class="fa fa-spinner fa-spin"></i> Adding...');
+        
+        $.ajax({
+            url: 'add-to-cart.php',
+            type: 'GET',
+            data: { id: productId },
+            dataType: 'json',
+            success: function(response) {
+                // Reset button state
+                button.html('<i class="fa fa-shopping-cart"></i> Add to cart');
+                
+                if (response.success) {
+                    // Update cart count
+                    $('.basket-item-count .count').text(response.total_qty);
+                    
+                    // Update cart dropdown
+                    $('.top-cart-row').html(response.cart_html);
+                    
+                    // Show success toast
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message
+                    });
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            },
+            error: function() {
+                // Reset button state
+                button.html('<i class="fa fa-shopping-cart"></i> Add to cart');
+                
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error adding to cart',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    });
 
+    // Handle wishlist button clicks
+    $('.add-to-wishlist-btn').on('click', function(e) {
+    e.preventDefault();
+    var productId = $(this).data('product-id');
+    var button = $(this);
+
+    // Show loading state
+    button.html('<i class="fa fa-spinner fa-spin"></i> Adding...');
+
+    $.ajax({
+        url: 'index.php',
+        type: 'GET',
+        data: { action: 'wishlist', pid: productId },
+        dataType: 'json',
+        success: function(response) {
+            button.html('<i class="fa fa-heart"></i> ');
+
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added to wishlist!',
+                    text: 'Product has been successfully added.',
+                    confirmButtonText: 'Go to wishlist',
+                    showCancelButton: true,
+                    cancelButtonText: 'Continue shopping'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'my-wishlist.php';
+                    }
+                });
+            } else if (response.error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.error,
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed && response.redirect) {
+                        window.location.href = response.redirect;
+                    }
+                });
+            }
+        },
+        error: function() {
+            button.html('<i class="fa fa-heart"></i>');
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error adding to wishlist',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    });
+});
+
+});
+</script>
 	
 
 </body>
 </html>
-
-

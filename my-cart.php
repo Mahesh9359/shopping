@@ -1,67 +1,67 @@
-<?php 
+<?php
 session_start();
-error_reporting(0);
+error_reporting(E_ALL);
+$pdtid = array();
+ini_set('display_errors', 1); // Remove in production
 include('includes/config.php');
 
-// Initialize variables with proper checks
+// Initialize variables safely
 $user_id = isset($_SESSION['id']) ? intval($_SESSION['id']) : 0;
-$pdtid = array();
+$pdtid = array(); // Explicitly initialize as array
 $is_logged_in = isset($_SESSION['login']) && !empty($_SESSION['login']);
-
-// Update cart quantities
-if(isset($_POST['submit'])){
-    if(!empty($_SESSION['cart'])){
-        foreach($_POST['quantity'] as $key => $val){
+// ================== UPDATE CART QUANTITIES ==================
+if (isset($_POST['submit'])) {
+    if (!empty($_SESSION['cart'])) {
+        foreach ($_POST['quantity'] as $key => $val) {
             $key = intval($key);
             $val = intval($val);
-            if($val <= 0){
+            
+            if ($val <= 0) {
                 unset($_SESSION['cart'][$key]);
             } else {
                 $_SESSION['cart'][$key]['quantity'] = $val;
             }
         }
-        echo "<script>alert('Your Cart has been Updated');</script>";
+        $_SESSION['toast_success'] = 'Cart updated successfully!';
     }
 }
 
-// Remove products from cart
-if(isset($_POST['remove_code'])){
-    if(!empty($_SESSION['cart'])){
-        foreach($_POST['remove_code'] as $key){
+// ================== REMOVE ITEMS FROM CART ==================
+if (isset($_POST['remove_code'])) {
+    if (!empty($_SESSION['cart'])) {
+        foreach ($_POST['remove_code'] as $key) {
             $key = intval($key);
             unset($_SESSION['cart'][$key]);
         }
-        echo "<script>alert('Your Cart has been Updated');</script>";
+        $_SESSION['toast_success'] = 'Item(s) removed from cart!';
     }
 }
 
-// Process order submission
-if(isset($_POST['ordersubmit'])) {
-    if(!$is_logged_in){
-        header('location:login.php');
+// ================== PROCESS ORDER SUBMISSION ==================
+if (isset($_POST['ordersubmit'])) {
+    if (!$is_logged_in) {
+        $_SESSION['toast_error'] = 'Please login to checkout!';
+        header('Location: login.php');
         exit;
     }
-    
-    if(!empty($_POST['quantity']) && !empty($_SESSION['pid'])){
-        $quantity = array_map('intval', $_POST['quantity']);
-        $pdd = array_map('intval', $_SESSION['pid']);
-        
-        if(count($pdd) == count($quantity)){
-            foreach(array_combine($pdd, $quantity) as $qty => $val34){
-                mysqli_query($con,"INSERT INTO orders(userId,productId,quantity) VALUES('$user_id','$qty','$val34')");
-            }
-            
-            // Store a flag in session to track order submission
-            $_SESSION['order_submitted'] = true;
-            
-            // Use JavaScript to open payment-method.php in a new tab
-            echo "<script>
-                window.open('payment-method.php', '_blank');
-                window.location.href = 'my-cart.php'; // redirect current page to cart or order history
-            </script>";
-            exit;
-        }
+
+    if (empty($_SESSION['cart'])) {
+        $_SESSION['toast_error'] = 'Your cart is empty!';
+        header('Location: my-cart.php');
+        exit;
     }
+
+    // Store cart temporarily for payment page
+    $_SESSION['pending_order'] = [
+        'products' => $_SESSION['cart'],
+        'total' => array_reduce($_SESSION['cart'], function($sum, $item) {
+            return $sum + ($item['price'] * $item['quantity']) + $item['shipping'];
+        }, 0)
+    ];
+
+    // Redirect to payment (NO database insert yet!)
+    header('Location: payment-method.php');
+    exit;
 }
 
 // Update billing address
@@ -73,7 +73,9 @@ if(isset($_POST['update']) && $is_logged_in){
     
     $query = mysqli_query($con,"UPDATE users SET billingAddress='$baddress',billingState='$bstate',billingCity='$bcity',billingPincode='$bpincode' WHERE id='$user_id'");
     if($query){
-        echo "<script>alert('Billing Address has been updated');</script>";
+        $_SESSION['toast_success'] = 'Billing address updated successfully!';
+
+    
     }
 }
 
@@ -86,7 +88,9 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     
     $query = mysqli_query($con,"UPDATE users SET shippingAddress='$saddress',shippingState='$sstate',shippingCity='$scity',shippingPincode='$spincode' WHERE id='$user_id'");
     if($query){
-        echo "<script>alert('Shipping Address has been updated');</script>";
+        $_SESSION['toast_success'] = 'Shipping address updated successfully!';
+
+    
     }
 }
 ?>
@@ -99,6 +103,9 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>My Cart</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/green.css">
     <link rel="stylesheet" href="assets/css/owl.carousel.css">
@@ -176,6 +183,8 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                             $subtotal = $quantity * $row['productPrice'] + $row['shippingCharge'];
                                             $totalprice += $subtotal;
                                             $_SESSION['qnty'] = $totalqunty += $quantity;
+                                            
+                                            // Now this will work since $pdtid is initialized
                                             array_push($pdtid, $productId);
                                     ?>
                                     <tr>
@@ -210,12 +219,19 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
                                         <td class="cart-product-sub-total"><span class="cart-sub-total-price">Rs <?php echo number_format($row['productPrice'], 2); ?></span></td>
                                         <td class="cart-product-sub-total"><span class="cart-sub-total-price">Rs <?php echo number_format($row['shippingCharge'], 2); ?></span></td>
                                         <td class="cart-product-grand-total"><span class="cart-grand-total-price">Rs <?php echo number_format($subtotal, 2); ?></span></td>
-                                    </tr>
-                                    <?php 
-                                        }
-                                        $_SESSION['pid'] = $pdtid;
-                                    } 
-                                    ?>
+</tr>
+<?php 
+    // Stock availability check
+    $stockCheck = mysqli_query($con, "SELECT stock FROM products WHERE id = $productId");
+    if($stock = mysqli_fetch_assoc($stockCheck)) {
+        if($stock['stock'] < $quantity) {
+            echo "<tr><td colspan='7'><div class='alert alert-warning'>Only {$stock['stock']} available in stock for product '".htmlentities($row['productName'])."'</div></td></tr>";
+        }
+    }
+}
+$_SESSION['pid'] = $pdtid;
+} 
+?>
                                 </tbody>
                             </table>
                             <?php else: ?>
@@ -353,9 +369,41 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     </div>
 </div>
 
-<?php include('includes/brands-slider.php');?>
-<?php include('includes/footer.php');?>
 
+<?php include('includes/footer.php');?>
+<?php if (isset($_SESSION['toast_success'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'success',
+        title: '<?php echo addslashes($_SESSION['toast_success']); ?>',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+    });
+});
+</script>
+<?php unset($_SESSION['toast_success']); endif; ?>
+<?php if (isset($_SESSION['toast_error'])): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: '<?php echo addslashes($_SESSION['toast_error']); ?>',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+                });
+                });
+                </script>
+                <?php unset($_SESSION['toast_error']); endif; ?>
+                
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="assets/js/jquery-1.11.1.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
@@ -370,22 +418,45 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
 <script src="assets/js/scripts.js"></script>
 <script>
 document.getElementById("checkout-btn").addEventListener("click", function () {
-    const cartForm = document.getElementById("cart");
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be redirected to the payment page.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const cartForm = document.getElementById("cart");
+            const formData = new FormData(cartForm);
+            formData.append("ordersubmit", "true");
 
-    const formData = new FormData(cartForm);
-    formData.append("ordersubmit", "true");
+            fetch("my-cart.php", {
+                method: "POST",
+                body: formData
+            }).then(res => {
+                // Show a toast before redirecting
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Redirecting to payment...',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3200
+                });
 
-    fetch("my-cart.php", {
-        method: "POST",
-        body: formData
-    }).then(res => {
-        // Open new tab for payment
-        window.open("payment-method.php", "_blank");
-        // Reload cart page to clear items if needed
-        window.location.href = "my-cart.php";
+                setTimeout(() => {
+                    window.open("payment-method.php", "_blank");
+                    window.location.href = "my-cart.php";
+                }, 1200);
+            });
+        }
     });
 });
 </script>
+
 
 </body>
 </html>

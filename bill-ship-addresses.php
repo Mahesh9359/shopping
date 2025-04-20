@@ -8,33 +8,45 @@ header('location:.php');
 }
 else{
 	// code for billing address updation
-	if(isset($_POST['update']))
-	{
-		$baddress=$_POST['billingaddress'];
-		$bstate=$_POST['bilingstate'];
-		$bcity=$_POST['billingcity'];
-		$bpincode=$_POST['billingpincode'];
-		$query=mysqli_query($con,"update users set billingAddress='$baddress',billingState='$bstate',billingCity='$bcity',billingPincode='$bpincode' where id='".$_SESSION['id']."'");
-		if($query)
-		{
-echo "<script>alert('Billing Address has been updated');</script>";
-		}
-	}
-
+	// code for billing address updation
+if(isset($_POST['update']))
+{
+    $baddress=$_POST['billingaddress'];
+    $bstate=$_POST['bilingstate'];
+    $bcity=$_POST['billingcity'];
+    $bpincode=$_POST['billingpincode'];
+    $query=mysqli_query($con,"update users set billingAddress='$baddress',billingState='$bstate',billingCity='$bcity',billingPincode='$bpincode' where id='".$_SESSION['id']."'");
+    if($query)
+    {
+        $_SESSION['billing_success'] = "Billing Address has been updated";
+    }
+    else
+    {
+        $_SESSION['billing_error'] = "Error updating billing address";
+    }
+    header("Location: bill-ship-addresses.php");
+    exit();
+}
 
 // code for Shipping address updation
-	if(isset($_POST['shipupdate']))
-	{
-		$saddress=$_POST['shippingaddress'];
-		$sstate=$_POST['shippingstate'];
-		$scity=$_POST['shippingcity'];
-		$spincode=$_POST['shippingpincode'];
-		$query=mysqli_query($con,"update users set shippingAddress='$saddress',shippingState='$sstate',shippingCity='$scity',shippingPincode='$spincode' where id='".$_SESSION['id']."'");
-		if($query)
-		{
-echo "<script>alert('Shipping Address has been updated');</script>";
-		}
-	}
+if(isset($_POST['shipupdate']))
+{
+    $saddress=$_POST['shippingaddress'];
+    $sstate=$_POST['shippingstate'];
+    $scity=$_POST['shippingcity'];
+    $spincode=$_POST['shippingpincode'];
+    $query=mysqli_query($con,"update users set shippingAddress='$saddress',shippingState='$sstate',shippingCity='$scity',shippingPincode='$spincode' where id='".$_SESSION['id']."'");
+    if($query)
+    {
+        $_SESSION['shipping_success'] = "Shipping Address has been updated";
+    }
+    else
+    {
+        $_SESSION['shipping_error'] = "Error updating shipping address";
+    }
+    header("Location: bill-ship-addresses.php");
+    exit();
+}
 
 
 
@@ -54,30 +66,30 @@ echo "<script>alert('Shipping Address has been updated');</script>";
 	    <title>My Account</title>
 
 	    <!-- Bootstrap Core CSS -->
-	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-	    
+	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 	    <!-- Customizable CSS -->
-	    <link rel="stylesheet" href="/assets/css/main.css">
-	    <link rel="stylesheet" href="/assets/css/green.css">
-	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
+	    <link rel="stylesheet" href="assets/css/main.css">
+	    <link rel="stylesheet" href="assets/css/green.css">
+	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="assets/css/owl.transitions.css">
 		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
-		<link href="/assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="/assets/css/animate.min.css">
-		<link rel="stylesheet" href="/assets/css/rateit.css">
-		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+		<link href="assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="assets/css/animate.min.css">
+		<link rel="stylesheet" href="assets/css/rateit.css">
+		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
 
 		<!-- Demo Purpose Only. Should be removed in production -->
-		<link rel="stylesheet" href="/assets/css/config.css">
+		<link rel="stylesheet" href="assets/css/config.css">
 
-		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
-		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-		<link rel="shortcut icon" href="/assets/images/favicon.ico">
+		<link rel="shortcut icon" href="assets/images/favicon.ico">
 
 	</head>
     <body class="cnt-home">
@@ -97,7 +109,7 @@ echo "<script>alert('Shipping Address has been updated');</script>";
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="/">Home</a></li>
+				<li><a href="#">Home</a></li>
 				<li class='active'>Checkout</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -228,26 +240,26 @@ while($row=mysqli_fetch_array($query))
 			<?php include('includes/myaccount-sidebar.php');?>
 			</div><!-- /.row -->
 		</div><!-- /.checkout-box -->
-	<?php include('includes/brands-slider.php');?>
+	  
 
 </div>
 </div>
 <?php include('includes/footer.php');?>
-	<script src="/assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
 	
-	<script src="/assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="assets/js/owl.carousel.min.js"></script>
 	
-	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="/assets/js/owl.carousel.min.js"></script>
-	
-	<script src="/assets/js/echo.min.js"></script>
-	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="/assets/js/bootstrap-slider.min.js"></script>
-    <script src="/assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
-    <script src="/assets/js/bootstrap-select.min.js"></script>
-    <script src="/assets/js/wow.min.js"></script>
-	<script src="/assets/js/scripts.js"></script>
+	<script src="assets/js/echo.min.js"></script>
+	<script src="assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="assets/js/bootstrap-slider.min.js"></script>
+    <script src="assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+    <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+	<script src="assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	
@@ -266,6 +278,53 @@ while($row=mysqli_fetch_array($query))
 		   $('.show-theme-options').delay(2000).trigger('click');
 		});
 	</script>
+	<?php if (isset($_SESSION['billing_success'])): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['billing_success']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['billing_success']); endif; ?>
+
+<?php if (isset($_SESSION['billing_error'])): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '<?php echo $_SESSION['billing_error']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['billing_error']); endif; ?>
+
+<?php if (isset($_SESSION['shipping_success'])): ?>
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '<?php echo $_SESSION['shipping_success']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['shipping_success']); endif; ?>
+
+<?php if (isset($_SESSION['shipping_error'])): ?>
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '<?php echo $_SESSION['shipping_error']; ?>',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+<?php unset($_SESSION['shipping_error']); endif; ?>
 </body>
 </html>
 <?php } ?>

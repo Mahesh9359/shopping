@@ -29,41 +29,41 @@ else{
 	    <meta name="robots" content="all">
 
 	    <title>Pending Order History</title>
-	    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-	    <link rel="stylesheet" href="/assets/css/main.css">
-	    <link rel="stylesheet" href="/assets/css/green.css">
-	    <link rel="stylesheet" href="/assets/css/owl.carousel.css">
-		<link rel="stylesheet" href="/assets/css/owl.transitions.css">
-		<!--<link rel="stylesheet" href="/assets/css/owl.theme.css">-->
-		<link href="/assets/css/lightbox.css" rel="stylesheet">
-		<link rel="stylesheet" href="/assets/css/animate.min.css">
-		<link rel="stylesheet" href="/assets/css/rateit.css">
-		<link rel="stylesheet" href="/assets/css/bootstrap-select.min.css">
+	    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	    <link rel="stylesheet" href="assets/css/main.css">
+	    <link rel="stylesheet" href="assets/css/green.css">
+	    <link rel="stylesheet" href="assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="assets/css/owl.transitions.css">
+		<!--<link rel="stylesheet" href="assets/css/owl.theme.css">-->
+		<link href="assets/css/lightbox.css" rel="stylesheet">
+		<link rel="stylesheet" href="assets/css/animate.min.css">
+		<link rel="stylesheet" href="assets/css/rateit.css">
+		<link rel="stylesheet" href="assets/css/bootstrap-select.min.css">
 
 		<!-- Demo Purpose Only. Should be removed in production -->
-		<link rel="stylesheet" href="/assets/css/config.css">
+		<link rel="stylesheet" href="assets/css/config.css">
 
-		<link href="/assets/css/green.css" rel="alternate stylesheet" title="Green color">
-		<link href="/assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
-		<link href="/assets/css/red.css" rel="alternate stylesheet" title="Red color">
-		<link href="/assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
-		<link href="/assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
+		<link href="assets/css/green.css" rel="alternate stylesheet" title="Green color">
+		<link href="assets/css/blue.css" rel="alternate stylesheet" title="Blue color">
+		<link href="assets/css/red.css" rel="alternate stylesheet" title="Red color">
+		<link href="assets/css/orange.css" rel="alternate stylesheet" title="Orange color">
+		<link href="assets/css/dark-green.css" rel="alternate stylesheet" title="Darkgreen color">
 		<!-- Demo Purpose Only. Should be removed in production : END -->
 
 		
 		<!-- Icons/Glyphs -->
-		<link rel="stylesheet" href="/assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 
         <!-- Fonts --> 
 		<link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
 		
 		<!-- Favicon -->
-		<link rel="shortcut icon" href="/assets/images/favicon.ico">
+		<link rel="shortcut icon" href="assets/images/favicon.ico">
 
 		<!-- HTML5 elements and media queries Support for IE8 : HTML5 shim and Respond.js -->
 		<!--[if lt IE 9]>
-			<script src="/assets/js/html5shiv.js"></script>
-			<script src="/assets/js/respond.min.js"></script>
+			<script src="assets/js/html5shiv.js"></script>
+			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
 
 	</head>
@@ -82,7 +82,7 @@ else{
 	<div class="container">
 		<div class="breadcrumb-inner">
 			<ul class="list-inline list-unstyled">
-				<li><a href="/#">Home</a></li>
+				<li><a href="#">Home</a></li>
 				<li class='active'>Shopping Cart</li>
 			</ul>
 		</div><!-- /.breadcrumb-inner -->
@@ -127,12 +127,12 @@ while($row=mysqli_fetch_array($query))
 				<tr>
 					<td><?php echo $cnt;?></td>
 					<td class="cart-image">
-						<a class="entry-thumbnail" href="/detail.html">
-						    <img src="/admin/productimages/<?php echo $row['proid'];?>/<?php echo $row['pimg1'];?>" alt="" width="84" height="146">
+						<a class="entry-thumbnail" href="detail.html">
+						    <img src="admin/productimages/<?php echo $row['proid'];?>/<?php echo $row['pimg1'];?>" alt="" width="84" height="146">
 						</a>
 					</td>
 					<td class="cart-product-name-info">
-						<h4 class='cart-product-description'><a href="/product-details.php?pid=<?php echo $row['opid'];?>">
+						<h4 class='cart-product-description'><a href="product-details.php?pid=<?php echo $row['opid'];?>">
 						<?php echo $row['pname'];?></a></h4>
 						
 						
@@ -146,12 +146,12 @@ while($row=mysqli_fetch_array($query))
 					<td class="cart-product-sub-total"><?php echo $row['paym']; ?>  </td>
 					<td class="cart-product-sub-total"><?php echo $row['odate']; ?>  </td>
 					
-					<td><a href="/pending-orders.php?id=<?php echo $row['oid']; ?> ">Delete</td>
+					<td><a href="pending-orders.php?id=<?php echo $row['oid']; ?> ">Delete</td>
 				</tr>
 <?php $cnt=$cnt+1;} ?>
 <tr>
 	<td colspan="9"><div class="cart-checkout-btn pull-right">
-							<button type="submit" name="ordersubmit" class="btn btn-primary"><a href="/payment-method.php">PROCCED To Payment</a></button>
+							<button type="submit" name="ordersubmit" class="btn btn-primary"><a href="payment-method.php">PROCCED To Payment</a></button>
 						
 						</div></td>
 
@@ -172,27 +172,24 @@ while($row=mysqli_fetch_array($query))
 		</div><!-- /.shopping-cart -->
 		</div> <!-- /.row -->
 		</form>
-		<!-- ============================================== BRANDS CAROUSEL ============================================== -->
-<?php echo include('includes/brands-slider.php');?>
-<!-- ============================================== BRANDS CAROUSEL : END ============================================== -->	</div><!-- /.container -->
 </div><!-- /.body-content -->
 <?php include('includes/footer.php');?>
 
-	<script src="/assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
 	
-	<script src="/assets/js/bootstrap.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
 	
-	<script src="/assets/js/bootstrap-hover-dropdown.min.js"></script>
-	<script src="/assets/js/owl.carousel.min.js"></script>
+	<script src="assets/js/bootstrap-hover-dropdown.min.js"></script>
+	<script src="assets/js/owl.carousel.min.js"></script>
 	
-	<script src="/assets/js/echo.min.js"></script>
-	<script src="/assets/js/jquery.easing-1.3.min.js"></script>
-	<script src="/assets/js/bootstrap-slider.min.js"></script>
-    <script src="/assets/js/jquery.rateit.min.js"></script>
-    <script type="text/javascript" src="/assets/js/lightbox.min.js"></script>
-    <script src="/assets/js/bootstrap-select.min.js"></script>
-    <script src="/assets/js/wow.min.js"></script>
-	<script src="/assets/js/scripts.js"></script>
+	<script src="assets/js/echo.min.js"></script>
+	<script src="assets/js/jquery.easing-1.3.min.js"></script>
+	<script src="assets/js/bootstrap-slider.min.js"></script>
+    <script src="assets/js/jquery.rateit.min.js"></script>
+    <script type="text/javascript" src="assets/js/lightbox.min.js"></script>
+    <script src="assets/js/bootstrap-select.min.js"></script>
+    <script src="assets/js/wow.min.js"></script>
+	<script src="assets/js/scripts.js"></script>
 
 	<!-- For demo purposes – can be removed on production -->
 	
