@@ -1,26 +1,32 @@
-
 <?php
+// 🚫 Absolutely nothing above this line - no space, no blank lines
 session_start();
 include('include/config.php');
-if(strlen($_SESSION['alogin'])==0)
-	{	
-header('location:index.php');
-}
-else{
-date_default_timezone_set('Asia/Kolkata');// change according timezone
-$currentTime = date( 'd-m-Y h:i:s A', time () );
 
-
-if(isset($_POST['submit']))
-{
-	$category=$_POST['category'];
-	$description=$_POST['description'];
-	$id=intval($_GET['id']);
-$sql=mysqli_query($con,"update category set categoryName='$category',categoryDescription='$description',updationDate='$currentTime' where id='$id'");
-$_SESSION['msg']="Category Updated !!";
-
+// ✅ Proper session check with error handling
+if (!isset($_SESSION['alogin']) || empty($_SESSION['alogin'])) {
+    header('location:index.php');
+    exit();
 }
 
+date_default_timezone_set('Asia/Kolkata');
+$currentTime = date('d-m-Y h:i:s A', time());
+
+if(isset($_POST['submit'])) {
+    $category = $_POST['category'];
+    $description = $_POST['description'];
+    $id = intval($_GET['id']);
+// Use prepared statements to prevent SQL injection
+$stmt = $con->prepare("UPDATE category SET categoryName=?, categoryDescription=?, updationDate=? WHERE id=?");
+$stmt->bind_param("sssi", $category, $description, $currentTime, $id);
+$stmt->execute();
+if (!$stmt->execute()) {
+    error_log("Database error: " . $stmt->error);
+    $_SESSION['error'] = "Failed to update category";
+} else {
+    $_SESSION['msg'] = "Category Updated !!";
+}
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

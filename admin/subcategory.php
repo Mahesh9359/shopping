@@ -1,12 +1,12 @@
-
 <?php
+// 🚫 No space above this line
 session_start();
 include('include/config.php');
-if(strlen($_SESSION['alogin'])==0)
-	{	
-header('location:index.php');
-}
-else{
+
+if (!isset($_SESSION['alogin']) || strlen($_SESSION['alogin']) == 0) {
+    header('location:index.php');
+    exit(); // 🔐 Always use exit() after header redirect
+} else{
 if(isset($_POST['submit']))
 {
 	$category=$_POST['category'];
