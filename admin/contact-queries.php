@@ -82,34 +82,32 @@ if (isset($_GET['del'])) {
                                         </tr>
                                     </thead>
                                     <tbody>
-
-<?php 
-$query=mysqli_query($con,"SELECT * FROM contact_queries ORDER BY created_at DESC");
-$cnt=1;
-while($row=mysqli_fetch_array($query))
-{
-    $statusClass = ($row['status'] == 'unread') ? 'label-important' : 'label-success';
-    $statusText = ($row['status'] == 'unread') ? 'Unread' : 'Read';
-?>                                    
-                                        <tr>
-                                            <td><?php echo htmlentities($cnt);?></td>
-                                            <td><?php echo htmlentities($row['name']);?></td>
-                                            <td><?php echo htmlentities($row['email']);?></td>
-                                            <td><?php echo htmlentities($row['phone']);?></td>
-                                            <td><?php echo htmlentities($row['subject']);?></td>
-                                            <td><?php echo htmlentities($row['message']);?></td>
-                                            <td><?php echo htmlentities($row['created_at']);?></td>
-                                            <td><span class="label <?php echo $statusClass; ?>"><?php echo $statusText; ?></span></td>
-                                            <td>
-                                                <?php if($row['status'] == 'unread') { ?>
-                                                <a href="contact-queries.php?markread=<?php echo $row['id']?>" title="Mark as Read"><i class="icon-check"></i></a>
-                                                <?php } ?>
-                                                <a href="edit-query.php?id=<?php echo $row['id']?>" title="Edit"><i class="icon-edit"></i></a>
-                                                <a href="contact-queries.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')" title="Delete"><i class="icon-remove-sign"></i></a>
-                                            </td>
-                                        </tr>
-                                        <?php $cnt=$cnt+1; } ?>
-                                        
+    <?php 
+    $query = mysqli_query($con, "SELECT * FROM contact_queries ORDER BY created_at DESC");
+    $cnt = 1;
+    while ($row = mysqli_fetch_array($query)) {
+        $statusClass = ($row['status'] == 'unread') ? 'label-important' : 'label-success';
+        $statusText = ($row['status'] == 'unread') ? 'Unread' : 'Read';
+    ?>                                    
+        <tr>
+            <td><?php echo htmlentities($cnt); ?></td>
+            <td><?php echo htmlentities($row['name'] ?? ''); ?></td>
+            <td><?php echo htmlentities($row['email'] ?? ''); ?></td>
+            <td><?php echo htmlentities($row['phone'] ?? ''); ?></td>
+            <td><?php echo htmlentities($row['subject'] ?? ''); ?></td>
+            <td><?php echo htmlentities($row['message'] ?? ''); ?></td>
+            <td><?php echo htmlentities($row['created_at'] ?? ''); ?></td>
+            <td><span class="label <?php echo $statusClass; ?>"><?php echo $statusText; ?></span></td>
+            <td>
+                <?php if ($row['status'] == 'unread') { ?>
+                    <a href="contact-queries.php?markread=<?php echo $row['id']?>" title="Mark as Read"><i class="icon-check"></i></a>
+                <?php } ?>
+                <a href="edit-query.php?id=<?php echo $row['id']?>" title="Edit"><i class="icon-edit"></i></a>
+                <a href="contact-queries.php?id=<?php echo $row['id']?>&del=delete" onClick="return confirm('Are you sure you want to delete?')" title="Delete"><i class="icon-remove-sign"></i></a>
+            </td>
+        </tr>
+    <?php $cnt = $cnt + 1; } ?>
+</tbody>
                                 </table>
                             </div>
                         </div>                        
