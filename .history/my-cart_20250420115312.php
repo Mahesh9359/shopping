@@ -38,7 +38,6 @@ if (isset($_POST['remove_code'])) {
 }
 
 // ================== PROCESS ORDER SUBMISSION ==================
-// ================== PROCESS ORDER SUBMISSION ==================
 if (isset($_POST['ordersubmit'])) {
     if (!$is_logged_in) {
         $_SESSION['toast_error'] = 'Please login to checkout!';
@@ -48,30 +47,6 @@ if (isset($_POST['ordersubmit'])) {
 
     if (empty($_SESSION['cart'])) {
         $_SESSION['toast_error'] = 'Your cart is empty!';
-        header('Location: my-cart.php');
-        exit;
-    }
-
-    // Check if addresses are complete
-    $addressCheck = mysqli_query($con, "SELECT billingAddress, billingState, billingCity, billingPincode, billingPhone,
-    shippingAddress, shippingState, shippingCity, shippingPincode, shippingPhone 
-    FROM users WHERE id='$user_id'");
-$addresses = mysqli_fetch_assoc($addressCheck);
-
-$billingComplete = !empty($addresses['billingAddress']) && !empty($addresses['billingState']) && 
-!empty($addresses['billingCity']) && !empty($addresses['billingPincode']) &&
-!empty($addresses['billingPhone']);
-
-$shippingComplete = !empty($addresses['shippingAddress']) && !empty($addresses['shippingState']) && 
-!empty($addresses['shippingCity']) && !empty($addresses['shippingPincode']) &&
-!empty($addresses['shippingPhone']);
-    
-    if (!$billingComplete || !$shippingComplete) {
-        $errorMsg = [];
-        if (!$billingComplete) $errorMsg[] = "Billing address is incomplete";
-        if (!$shippingComplete) $errorMsg[] = "Shipping address is incomplete";
-        
-        $_SESSION['toast_error'] = implode(" and ", $errorMsg) . ". Please update your addresses before checkout.";
         header('Location: my-cart.php');
         exit;
     }
@@ -95,20 +70,12 @@ if(isset($_POST['update']) && $is_logged_in){
     $bstate = mysqli_real_escape_string($con, $_POST['bilingstate'] ?? '');
     $bcity = mysqli_real_escape_string($con, $_POST['billingcity'] ?? '');
     $bpincode = mysqli_real_escape_string($con, $_POST['billingpincode'] ?? '');
-    $bphone = mysqli_real_escape_string($con, $_POST['billingphone'] ?? '');
     
-    $query = mysqli_query($con,"UPDATE users SET 
-        billingAddress='$baddress',
-        billingState='$bstate',
-        billingCity='$bcity',
-        billingPincode='$bpincode',
-        billingPhone='$bphone'
-        WHERE id='$user_id'");
-    
+    $query = mysqli_query($con,"UPDATE users SET billingAddress='$baddress',billingState='$bstate',billingCity='$bcity',billingPincode='$bpincode' WHERE id='$user_id'");
     if($query){
         $_SESSION['toast_success'] = 'Billing address updated successfully!';
-    } else {
-        $_SESSION['toast_error'] = 'Error updating billing address: ' . mysqli_error($con);
+
+    
     }
 }
 
@@ -118,20 +85,12 @@ if(isset($_POST['shipupdate']) && $is_logged_in){
     $sstate = mysqli_real_escape_string($con, $_POST['shippingstate'] ?? '');
     $scity = mysqli_real_escape_string($con, $_POST['shippingcity'] ?? '');
     $spincode = mysqli_real_escape_string($con, $_POST['shippingpincode'] ?? '');
-    $sphone = mysqli_real_escape_string($con, $_POST['shippingphone'] ?? '');
     
-    $query = mysqli_query($con,"UPDATE users SET 
-        shippingAddress='$saddress',
-        shippingState='$sstate',
-        shippingCity='$scity',
-        shippingPincode='$spincode',
-        shippingPhone='$sphone'
-        WHERE id='$user_id'");
-    
+    $query = mysqli_query($con,"UPDATE users SET shippingAddress='$saddress',shippingState='$sstate',shippingCity='$scity',shippingPincode='$spincode' WHERE id='$user_id'");
     if($query){
         $_SESSION['toast_success'] = 'Shipping address updated successfully!';
-    } else {
-        $_SESSION['toast_error'] = 'Error updating shipping address: ' . mysqli_error($con);
+
+    
     }
 }
 ?>
@@ -299,28 +258,22 @@ $_SESSION['pid'] = $pdtid;
                                             $query = mysqli_query($con,"SELECT * FROM users WHERE id='$user_id'");
                                             if($query && $row = mysqli_fetch_array($query)){
                                         ?>
-<!-- In both billing and shipping address forms -->
-<div class="form-group">
-    <label class="info-title">Billing Address<span>*</span></label>
-    <textarea class="form-control unicase-form-control text-input" name="billingaddress" required><?php echo htmlentities($row['billingAddress'] ?? ''); ?></textarea>
-</div>
-<div class="form-group">
-    <label class="info-title">Billing State<span>*</span></label>
-    <input type="text" class="form-control unicase-form-control text-input" name="bilingstate" value="<?php echo htmlentities($row['billingState'] ?? ''); ?>" required>
-</div>
-<div class="form-group">
-    <label class="info-title">Billing City<span>*</span></label>
-    <input type="text" class="form-control unicase-form-control text-input" name="billingcity" value="<?php echo htmlentities($row['billingCity'] ?? ''); ?>" required>
-</div>
-<div class="form-group">
-    <label class="info-title">Billing Pincode<span>*</span></label>
-    <input type="text" class="form-control unicase-form-control text-input" name="billingpincode" value="<?php echo htmlentities($row['billingPincode'] ?? ''); ?>" required>
-</div>
-<div class="form-group">
-    <label class="info-title">Billing Phone<span>*</span></label>
-    <input type="tel" class="form-control unicase-form-control text-input" name="billingphone" 
-           value="<?php echo htmlentities($row['billingPhone'] ?? ''); ?>" required>
-</div>
+                                        <div class="form-group">
+                                            <label class="info-title">Billing Address<span>*</span></label>
+                                            <textarea class="form-control unicase-form-control text-input" name="billingaddress" required><?php echo htmlentities($row['billingAddress'] ?? ''); ?></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="info-title">Billing State<span>*</span></label>
+                                            <input type="text" class="form-control unicase-form-control text-input" name="bilingstate" value="<?php echo htmlentities($row['billingState'] ?? ''); ?>" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="info-title">Billing City<span>*</span></label>
+                                            <input type="text" class="form-control unicase-form-control text-input" name="billingcity" value="<?php echo htmlentities($row['billingCity'] ?? ''); ?>" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="info-title">Billing Pincode<span>*</span></label>
+                                            <input type="text" class="form-control unicase-form-control text-input" name="billingpincode" value="<?php echo htmlentities($row['billingPincode'] ?? ''); ?>" required>
+                                        </div>
                                         <button type="submit" name="update" class="btn-upper btn btn-primary checkout-page-button">Update</button>
                                         <?php 
                                             }
@@ -368,11 +321,6 @@ $_SESSION['pid'] = $pdtid;
                                             <label class="info-title">Shipping Pincode<span>*</span></label>
                                             <input type="text" class="form-control unicase-form-control text-input" name="shippingpincode" value="<?php echo htmlentities($row['shippingPincode'] ?? ''); ?>" required>
                                         </div>
-                                        <div class="form-group">
-    <label class="info-title">Shipping Phone<span>*</span></label>
-    <input type="tel" class="form-control unicase-form-control text-input" name="shippingphone" 
-           value="<?php echo htmlentities($row['shippingPhone'] ?? ''); ?>" required>
-</div>
                                         <button type="submit" name="shipupdate" class="btn-upper btn btn-primary checkout-page-button">Update</button>
                                         <?php 
                                             }
@@ -470,35 +418,6 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="assets/js/scripts.js"></script>
 <script>
 document.getElementById("checkout-btn").addEventListener("click", function () {
-    <?php if($is_logged_in): ?>
-        // Check if addresses are filled
-        <?php 
-        $query = mysqli_query($con,"SELECT billingAddress, billingState, billingCity, billingPincode, 
-                                  shippingAddress, shippingState, shippingCity, shippingPincode 
-                                  FROM users WHERE id='$user_id'");
-        $addresses = mysqli_fetch_assoc($query);
-        $billingComplete = !empty($addresses['billingAddress']) && !empty($addresses['billingState']) && 
-                          !empty($addresses['billingCity']) && !empty($addresses['billingPincode']);
-        $shippingComplete = !empty($addresses['shippingAddress']) && !empty($addresses['shippingState']) && 
-                          !empty($addresses['shippingCity']) && !empty($addresses['shippingPincode']);
-        ?>
-        
-        <?php if(!$billingComplete || !$shippingComplete): ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Address Required',
-                html: `<?php 
-                    $messages = [];
-                    if(!$billingComplete) $messages[] = "Please complete your billing address";
-                    if(!$shippingComplete) $messages[] = "Please complete your shipping address";
-                    echo implode("<br>", $messages);
-                ?>`,
-                confirmButtonText: 'OK'
-            });
-            return false;
-        <?php endif; ?>
-    <?php endif; ?>
-
     Swal.fire({
         title: 'Are you sure?',
         text: "You will be redirected to the payment page.",
@@ -534,12 +453,6 @@ document.getElementById("checkout-btn").addEventListener("click", function () {
                 }, 1200);
             });
         }
-    });
-});
-// Phone number validation
-document.querySelectorAll('input[type="tel"]').forEach(input => {
-    input.addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9+]/g, '');
     });
 });
 </script>

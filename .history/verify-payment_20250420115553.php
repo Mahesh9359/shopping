@@ -9,8 +9,8 @@ use Razorpay\Api\Api;
 use Razorpay\Api\Errors\SignatureVerificationError;
 
 // Razorpay API Keys
-$api_key = "rzp_live_GMPTAi3TWJL16X";            // Replace with your test key
-$api_secret = "T7nERw33eG9wPl1tMvKGYJM6";       // Replace with your test secret
+$api_key = "rzp_test_8MkpZSt86Wa9F3";            // Replace with your test key
+$api_secret = "mkxAJ86h9C14W0KH7skrzAsY";       // Replace with your test secret
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api = new Api($api_key, $api_secret);

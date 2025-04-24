@@ -166,7 +166,7 @@ if (isset($_POST['submit'])) {
     document.getElementById('rzp-button').onclick = function (e) {
         e.preventDefault();
         var options = {
-            "key": "rzp_live_GMPTAi3TWJL16X", // Replace with your test key
+            "key": "rzp_test_8MkpZSt86Wa9F3", // Replace with your test key
             "amount": "<?php echo $totalCartAmount * 100; ?>", // in paise
             "currency": "INR",
             "name": "My Shop",

@@ -115,47 +115,6 @@ $oid = intval($_GET['oid'] ?? 0);
         margin-top: 20px;
     }
 
-    /* Status History Styles */
-    .status-history {
-        margin-top: 40px;
-        border-top: 1px solid #eee;
-        padding-top: 20px;
-    }
-    
-    .status-item {
-        position: relative;
-        padding-left: 30px;
-        margin-bottom: 20px;
-        border-left: 2px solid #4caf50;
-    }
-    
-    .status-date {
-        font-weight: 600;
-        color: #555;
-    }
-    
-    .status-badge {
-        position: absolute;
-        left: -12px;
-        top: 0;
-        background: #4caf50;
-        color: white;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        line-height: 24px;
-        font-size: 12px;
-    }
-    
-    .status-remark {
-        background: #f5f5f5;
-        padding: 10px 15px;
-        border-radius: 5px;
-        margin-top: 5px;
-        font-style: italic;
-    }
-
     /* Print Styles */
     @media print {
         body { 
@@ -347,45 +306,6 @@ $parentOrderId = $isGrouped ? $oid : ($row['parent_order_id'] ?? 0);
                                 </table>
                             </div>
                         </div>
-                        
-                        <!-- Status History Section -->
-                        <div class="status-history">
-                            <h4><i class="fa fa-history"></i> Order Status History</h4>
-                            
-                            <?php
-                            // Fetch status history for this order
-                            $historyQuery = $con->prepare("SELECT status, remark, postingDate 
-                                                         FROM ordertrackhistory 
-                                                         WHERE orderId = ? 
-                                                         ORDER BY postingDate DESC");
-                            $historyQuery->bind_param("i", $oid);
-                            $historyQuery->execute();
-                            $historyResult = $historyQuery->get_result();
-                            
-                            if ($historyResult->num_rows > 0): ?>
-                                <?php while ($history = $historyResult->fetch_assoc()): ?>
-                                    <div class="status-item">
-                                        <div class="status-badge">
-                                            <i class="fa fa-check"></i>
-                                        </div>
-                                        <div class="status-date">
-                                            <?php echo date('d M Y, h:i A', strtotime($history['postingDate'])); ?>
-                                        </div>
-                                        <div class="status-name">
-                                            <strong><?php echo htmlspecialchars($history['status']); ?></strong>
-                                        </div>
-                                        <?php if (!empty($history['remark'])): ?>
-                                            <div class="status-remark">
-                                                <?php echo htmlspecialchars($history['remark']); ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <p>No status history available for this order.</p>
-                            <?php endif; ?>
-                        </div>
-                        
                     <?php endif; ?>
                 <?php endif; ?>
 
@@ -416,8 +336,8 @@ $parentOrderId = $isGrouped ? $oid : ($row['parent_order_id'] ?? 0);
         const printContent = document.querySelector('.tracking-container').outerHTML;
         
         // Create print-specific styles
-        const printStyles = 
-            `<style>
+        const printStyles = `
+            <style>
                 @page { size: auto; margin: 5mm; }
                 body { 
                     font-family: 'Poppins', sans-serif; 
@@ -442,10 +362,8 @@ $parentOrderId = $isGrouped ? $oid : ($row['parent_order_id'] ?? 0);
                     border: 1px solid #ddd !important;
                     padding: 8px !important;
                 }
-                .status-item {
-                    page-break-inside: avoid;
-                }
-            </style>`;
+            </style>
+        `;
         
         // Replace body content with just what we want to print
         document.body.innerHTML = printStyles + printContent;
