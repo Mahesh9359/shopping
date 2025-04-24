@@ -160,7 +160,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
     <div class="container">
         <div class="breadcrumb-inner">
             <?php
-            $ret=mysqli_query($con,"select category.categoryName as catname,subcategory.subcategory as subcatname,products.productName as pname from products join category on category.id=products.category join subcategory on subcategory.id=products.subCategory where products.id='$pid'");
+            $ret=mysqli_query($con,"select category.categoryName as catname,subCategory.subcategory as subcatname,products.productName as pname from products join category on category.id=products.category join subcategory on subcategory.id=products.subCategory where products.id='$pid'");
             while ($rw=mysqli_fetch_array($ret)) {
             ?>
             <ul class="list-inline list-unstyled">

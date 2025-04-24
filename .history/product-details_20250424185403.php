@@ -45,31 +45,20 @@ if(isset($_GET['action']) && $_GET['action'] == "wishlist" && $pid > 0){
 }
 
 // Review submission
-if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && isset($_SESSION['login'])){
-    $quality = intval($_POST['quality']);
-    $price   = intval($_POST['price']);
-    $value   = intval($_POST['value']);
-    $review  = mysqli_real_escape_string($con, $_POST['review']);
-    $uid     = $_SESSION['id'];
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit']) && $pid > 0){
+    // Validate and sanitize inputs
+    $qty = isset($_POST['quality']) ? intval($_POST['quality']) : 0;
+    $price = isset($_POST['price']) ? intval($_POST['price']) : 0;
+    $value = isset($_POST['value']) ? intval($_POST['value']) : 0;
+    $name = isset($_POST['name']) ? mysqli_real_escape_string($con, $_POST['name']) : '';
+    $summary = isset($_POST['summary']) ? mysqli_real_escape_string($con, $_POST['summary']) : '';
+    $review = isset($_POST['review']) ? mysqli_real_escape_string($con, $_POST['review']) : '';
     
-    // Get user details
-    $user_query = mysqli_query($con, "SELECT name, email FROM users WHERE id='$uid'");
-    $user_data = mysqli_fetch_assoc($user_query);
-    
-    if($quality > 0 && $price > 0 && $value > 0 && !empty($review)){
-        $insert = "INSERT INTO user_product_reviews(
-                    userId, productId, 
-                    rating_quality, rating_price, rating_value, 
-                    review, user_name, user_email
-                   ) VALUES(
-                    '$uid', '$pid', 
-                    '$quality', '$price', '$value', 
-                    '$review', '".$user_data['name']."', '".$user_data['email']."'
-                   )";
-        mysqli_query($con, $insert);
+    if($qty > 0 && $price > 0 && $value > 0 && !empty($name) && !empty($summary) && !empty($review)){
+        mysqli_query($con, "INSERT INTO productreviews(productId, quality, price, value, name, summary, review) 
+                           VALUES('$pid', '$qty', '$price', '$value', '$name', '$summary', '$review')");
     }
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,62 +81,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" href="assets/images/favicon.ico">
-
-<style>
-.star-rating {
-    direction: rtl;
-    display: inline-block;
-    unicode-bidi: bidi-override;
-}
-
-.star-rating input {
-    display: none;
-}
-
-.star-rating label {
-    color: #ccc;
-    cursor: pointer;
-    font-size: 24px;
-    padding: 0 2px;
-}
-
-.star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label {
-    color: #ffc107;
-}
-
-.review-item {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.review-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.review-text {
-    margin-bottom: 10px;
-}
-
-.review-ratings div {
-    margin: 5px 0;
-    color: #ffc107;
-    font-size: 18px;
-}
-.review-title b {
-    font-size: 16px;
-}
-.review-title i {
-    font-size: 12px;
-    color: #666;
-}
-</style>
 </head>
 <body class="cnt-home">
 <header class="header-style-1">
@@ -160,8 +93,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
     <div class="container">
         <div class="breadcrumb-inner">
             <?php
-            $ret=mysqli_query($con,"select category.categoryName as catname,subcategory.subcategory as subcatname,products.productName as pname from products join category on category.id=products.category join subcategory on subcategory.id=products.subCategory where products.id='$pid'");
-            while ($rw=mysqli_fetch_array($ret)) {
+            $ret=mysqli_query($con,"SELECT 
+            category.categoryName as catname,
+            subcategory.subcategory as subcatname,
+            products.productName as pname 
+        FROM products 
+        JOIN category ON category.id=products.category 
+        JOIN subcategory ON subcategory.id=products.subCategory 
+        WHERE products.id='$pid'");
+        while ($rw=mysqli_fetch_array($ret)) {
             ?>
             <ul class="list-inline list-unstyled">
                 <li><a href="index.php">Home</a></li>
@@ -446,70 +386,98 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
 
                                 <div id="review" class="tab-pane">
                                     <div class="product-tab">
-                                    <div class="product-reviews">
-    <h4 class="title">Customer Reviews</h4>
-    <?php 
-    $qry = mysqli_query($con, "SELECT * FROM user_product_reviews WHERE productId='$pid' ORDER BY reviewDate DESC");
-    while($rvw = mysqli_fetch_array($qry)) {
-    ?>
-    <div class="review-item" style="border:1px solid #000; padding:1rem; margin-bottom:1rem;">
-        <div class="review-title">
-            <b><?= htmlentities($rvw['user_name']) ?></b> 
-            (<?= htmlentities($rvw['user_email']) ?>)<br>
-            <i class="fa fa-calendar"></i> <?= $rvw['reviewDate'] ?>
-        </div>
-        <div class="review-text"><?= nl2br(htmlentities($rvw['review'])) ?></div>
-        <div class="review-ratings">
-            <div>Quality: <?= str_repeat('★', $rvw['rating_quality']) . str_repeat('☆', 5 - $rvw['rating_quality']) ?></div>
-            <div>Price: <?= str_repeat('★', $rvw['rating_price']) . str_repeat('☆', 5 - $rvw['rating_price']) ?></div>
-            <div>Value: <?= str_repeat('★', $rvw['rating_value']) . str_repeat('☆', 5 - $rvw['rating_value']) ?></div>
-        </div>
-    </div>
-    <?php } ?>
-</div>
+                                        <div class="product-reviews">
+                                            <h4 class="title">Customer Reviews</h4>
+                                            <?php 
+                                            $qry=mysqli_query($con,"select * from productreviews where productId='$pid'");
+                                            while($rvw=mysqli_fetch_array($qry)) {
+                                            ?>
+                                            <div class="reviews" style="border: solid 1px #000; padding-left: 2% ">
+                                                <div class="review">
+                                                    <div class="review-title"><span class="summary"><?php echo htmlentities($rvw['summary']);?></span><span class="date"><i class="fa fa-calendar"></i><span><?php echo htmlentities($rvw['reviewDate']);?></span></span></div>
+                                                    <div class="text">"<?php echo htmlentities($rvw['review']);?>"</div>
+                                                    <div class="text"><b>Quality :</b> <?php echo htmlentities($rvw['quality']);?> Star</div>
+                                                    <div class="text"><b>Price :</b> <?php echo htmlentities($rvw['price']);?> Star</div>
+                                                    <div class="text"><b>value :</b> <?php echo htmlentities($rvw['value']);?> Star</div>
+                                                    <div class="author m-t-15"><i class="fa fa-pencil-square-o"></i> <span class="name"><?php echo htmlentities($rvw['name']);?></span></div>
+                                                </div>
+                                            </div>
+                                            <?php } ?>
+                                        </div>
 
-
-                                        <?php if(isset($_SESSION['login'])): ?>
-                                            <form method="post" class="cnt-form">
-    <div class="product-add-review">
-        <h4 class="title">Leave a Review</h4>
-        <div class="review-table table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr><th>Criteria</th><th>Rating</th></tr>
-                </thead>
-                <tbody>
-                    <?php foreach(['quality', 'price', 'value'] as $aspect): ?>
-                    <tr>
-                        <td class="cell-label"><?= ucfirst($aspect) ?></td>
-                        <td>
-                            <div class="star-rating">
-                                <?php for($i=5; $i>=1; $i--): ?>
-                                <input type="radio" id="<?= $aspect ?>-star<?= $i ?>" name="<?= $aspect ?>" value="<?= $i ?>" required>
-                                <label for="<?= $aspect ?>-star<?= $i ?>">★</label>
-                                <?php endfor; ?>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="form-group">
-            <label>Your Review <span class="astk">*</span></label>
-            <textarea name="review" class="form-control" rows="4" required></textarea>
-        </div>
-
-        <div class="action text-right">
-            <button type="submit" name="submit_review" class="btn btn-primary">Submit Review</button>
-        </div>
-    </div>
-</form>
-<?php else: ?>
-    <p class="text-warning">Please <a href="login.php">login</a> to leave a review.</p>
-<?php endif; ?>
-
+                                        <form role="form" class="cnt-form" name="review" method="post">
+                                        <div class="product-add-review">
+                                            <h4 class="title">Write your own review</h4>
+                                            <div class="review-table">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered">    
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="cell-label">&nbsp;</th>
+                                                                <th>1 star</th>
+                                                                <th>2 stars</th>
+                                                                <th>3 stars</th>
+                                                                <th>4 stars</th>
+                                                                <th>5 stars</th>
+                                                            </tr>
+                                                        </thead>    
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="cell-label">Quality</td>
+                                                                <td><input type="radio" name="quality" class="radio" value="1"></td>
+                                                                <td><input type="radio" name="quality" class="radio" value="2"></td>
+                                                                <td><input type="radio" name="quality" class="radio" value="3"></td>
+                                                                <td><input type="radio" name="quality" class="radio" value="4"></td>
+                                                                <td><input type="radio" name="quality" class="radio" value="5"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="cell-label">Price</td>
+                                                                <td><input type="radio" name="price" class="radio" value="1"></td>
+                                                                <td><input type="radio" name="price" class="radio" value="2"></td>
+                                                                <td><input type="radio" name="price" class="radio" value="3"></td>
+                                                                <td><input type="radio" name="price" class="radio" value="4"></td>
+                                                                <td><input type="radio" name="price" class="radio" value="5"></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="cell-label">Value</td>
+                                                                <td><input type="radio" name="value" class="radio" value="1"></td>
+                                                                <td><input type="radio" name="value" class="radio" value="2"></td>
+                                                                <td><input type="radio" name="value" class="radio" value="3"></td>
+                                                                <td><input type="radio" name="value" class="radio" value="4"></td>
+                                                                <td><input type="radio" name="value" class="radio" value="5"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="review-form">
+                                                <div class="form-container">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div class="form-group">
+                                                                <label for="exampleInputName">Your Name <span class="astk">*</span></label>
+                                                                <input type="text" class="form-control txt" id="exampleInputName" placeholder="" name="name" required="required">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="exampleInputSummary">Summary <span class="astk">*</span></label>
+                                                                <input type="text" class="form-control txt" id="exampleInputSummary" placeholder="" name="summary" required="required">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="exampleInputReview">Review <span class="astk">*</span></label>
+                                                                <textarea class="form-control txt txt-review" id="exampleInputReview" rows="4" placeholder="" name="review" required="required"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="action text-right">
+                                                        <button name="submit" class="btn btn-primary btn-upper">SUBMIT REVIEW</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -527,7 +495,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
                     <h3 class="section-title">Related Products</h3>
                     <div class="owl-carousel home-owl-carousel upsell-product custom-carousel owl-theme outer-top-xs">
                         <?php 
-                        $qry=mysqli_query($con,"select * from products where subCategory='$subcid' and category='$cid'");
+$qry=mysqli_query($con,"select * from products where products.subCategory='$subcid' and products.category='$cid'");
                         while($rw=mysqli_fetch_array($qry)) {
                         ?>    
                         <div class="item item-carousel">
@@ -598,37 +566,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_review']) && is
     $(window).bind("load", function() {
        $('.show-theme-options').delay(2000).trigger('click');
     });
-</script>
-<script>
-$(document).ready(function() {
-    // Star rating interaction
-    $('.star-rating').each(function() {
-        var $container = $(this);
-        
-        // Highlight stars on hover
-        $container.find('label').hover(
-            function() {
-                $(this).addClass('hover');
-                $(this).prevAll('label').addClass('hover');
-            },
-            function() {
-                $container.find('label').removeClass('hover');
-            }
-        );
-        
-        // Handle selection
-        $container.find('input').change(function() {
-            var $input = $(this);
-            $container.find('label').removeClass('selected');
-            $input.nextAll('label').addClass('selected');
-        });
-        
-        // Initialize selected state
-        $container.find('input:checked').each(function() {
-            $(this).nextAll('label').addClass('selected');
-        });
-    });
-});
 </script>
 </body>
 </html>
