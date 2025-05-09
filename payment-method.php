@@ -163,43 +163,59 @@ if (isset($_POST['submit'])) {
 <script src="assets/js/jquery-1.11.1.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
 <script>
-    document.getElementById('rzp-button').onclick = function (e) {
-        e.preventDefault();
-        var options = {
-            "key": "rzp_live_GMPTAi3TWJL16X", // Replace with your test key
-            "amount": "<?php echo $totalCartAmount * 100; ?>", // in paise
-            "currency": "INR",
-            "name": "My Shop",
-            "description": "Order Payment",
-            "handler": function (response) {
-                // Send payment response to server for verification
-                $.ajax({
-                    url: 'verify-payment.php',
-                    type: 'POST',
-                    data: {
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature
+document.getElementById('rzp-button').onclick = function (e) {
+    e.preventDefault();
+
+    // 1. First create the order via AJAX
+    $.ajax({
+        url: 'create-order.php',
+        type: 'POST',
+        success: function (res) {
+            let response = JSON.parse(res);
+            if (response.success) {
+                // 2. If order created, open Razorpay payment window
+                var options = {
+                    "key": "rzp_live_GMPTAi3TWJL16X", // Replace with test/live key
+                    "amount": "<?php echo $totalCartAmount * 100; ?>",
+                    "currency": "INR",
+                    "name": "My Shop",
+                    "description": "Order Payment",
+                    "handler": function (response) {
+                        // 3. On payment success, verify
+                        $.ajax({
+                            url: 'verify-payment.php',
+                            type: 'POST',
+                            data: {
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                order_number: response.order_number
+                            },
+                            success: function () {
+                                window.location.href = 'order-history.php?success=Payment Successful!';
+                            },
+                            error: function () {
+                                alert('Payment verification failed. Please contact support.');
+                            }
+                        });
                     },
-                    success: function (data) {
-                        window.location.href = 'order-history.php';
+                    "prefill": {
+                        "name": "<?php echo $_SESSION['login']; ?>",
+                        "email": "<?php echo $_SESSION['login']; ?>"
                     },
-                    error: function () {
-                        alert('Payment verification failed. Please contact support.');
+                    "theme": {
+                        "color": "#3399cc"
                     }
-                });
-            },
-            "prefill": {
-                "name": "<?php echo $_SESSION['login']; ?>",
-                "email": "<?php echo $_SESSION['login']; ?>"
-            },
-            "theme": {
-                "color": "#3399cc"
+                };
+                var rzp = new Razorpay(options);
+                rzp.open();
+            } else {
+                alert("Order could not be created: " + response.error);
             }
-        };
-        var rzp = new Razorpay(options);
-        rzp.open();
-    }
+        }
+    });
+}
+
 </script>
 </body>
 </html>

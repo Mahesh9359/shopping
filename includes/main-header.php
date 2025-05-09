@@ -15,7 +15,7 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                 $_SESSION['cart'][$key]['quantity'] = $val;
             }
         }
-        
+
         // Recalculate cart quantity total after update
         $totalqunty = 0;
         foreach ($_SESSION['cart'] as $item) {
@@ -26,37 +26,37 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
         $_SESSION['qnty'] = $totalqunty;
     }
 }
-
 ?>
 
 <div class="main-header">
     <div class="container">
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-3 logo-holder">
-                <!-- ============================================================= LOGO ============================================================= -->
+        <div class="row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 10px 0;">
+            <!-- Logo -->
+            <div class="logo-holder" style="flex: 1;">
                 <div class="logo">
                     <a href="index.php">
-                        <h3>ONLINE GROCERY STORE</h3>
+                        <h3 style="margin: 0;">ARIHANT TRADERS</h3>
                     </a>
                 </div>        
             </div>
-            
-            <div class="col-xs-12 col-sm-12 col-md-6 top-search-holder">
-                <div class="search-area">
+
+            <!-- Search Box -->
+            <div class="top-search-holder" style="flex: 2;">
+                <div class="search-area" style="width: 100%;">
                     <form name="search" method="post" action="search-result.php">
-                        <div class="control-group">
-                            <input class="search-field" placeholder="Search here..." name="product" required="required" />
-                            <button class="search-button" type="submit" name="search"></button>    
+                        <div class="control-group" style="display: flex; gap: 5px;">
+                            <input class="search-field form-control" placeholder="Search here..." name="product" required="required" style="flex: 1;" />
+                            <button class="search-button btn btn-primary" type="submit" name="search">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>    
                         </div>
                     </form>
-                </div><!-- /.search-area -->
-                <!-- ============================================================= SEARCH AREA : END ============================================================= -->
-            </div><!-- /.top-search-holder -->
+                </div>
+            </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-3 animate-dropdown top-cart-row">
-                <!-- ============================================================= SHOPPING CART DROPDOWN ============================================================= -->
+            <!-- Cart Dropdown -->
+            <div class="top-cart-row" style="flex: 1;">
                 <?php
-                // Calculate total quantity
                 $totalqunty = 0;
                 if (!empty($_SESSION['cart'])) {
                     foreach ($_SESSION['cart'] as $item) {
@@ -66,7 +66,6 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                     }
                     $_SESSION['qnty'] = $totalqunty;
                 ?>
-                
                 <div class="dropdown dropdown-cart">
                     <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
                         <div class="items-cart-inner">
@@ -83,15 +82,15 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                         if (!empty($_SESSION['cart'])) {
                             $sql = "SELECT * FROM products WHERE id IN(";
                             $ids = array();
-                            foreach($_SESSION['cart'] as $id => $value) {
+                            foreach ($_SESSION['cart'] as $id => $value) {
                                 $ids[] = intval($id);
                             }
                             $sql .= implode(",", $ids) . ") ORDER BY id ASC";
                             $query = mysqli_query($con, $sql);
                             $totalprice = 0;
-                            
-                            if($query && mysqli_num_rows($query) > 0) {
-                                while($row = mysqli_fetch_array($query)) {
+
+                            if ($query && mysqli_num_rows($query) > 0) {
+                                while ($row = mysqli_fetch_array($query)) {
                                     if (isset($_SESSION['cart'][$row['id']]['quantity'])) {
                                         $quantity = $_SESSION['cart'][$row['id']]['quantity'];
                                         $subtotal = $quantity * ($row['productPrice'] + $row['shippingCharge']);
@@ -102,17 +101,18 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                                 <div class="row">
                                     <div class="col-xs-4">
                                         <div class="image">
-                                            <a href="product-details.php?pid=<?php echo $row['id'];?>">
-                                                <img src="admin/productimages/<?php echo $row['id'];?>/<?php echo $row['productImage1'];?>" width="35" height="50" alt="">
+                                            <a href="product-details.php?pid=<?php echo $row['id']; ?>">
+                                                <img src="admin/productimages/<?php echo $row['id']; ?>/<?php echo $row['productImage1']; ?>" width="35" height="50" alt="">
                                             </a>
                                         </div>
                                     </div>
                                     <div class="col-xs-7">
-                                        <h3 class="name"><a href="product-details.php?pid=<?php echo $row['id'];?>"><?php echo $row['productName']; ?></a></h3>
+                                        <h3 class="name"><a href="product-details.php?pid=<?php echo $row['id']; ?>"><?php echo $row['productName']; ?></a></h3>
                                         <div class="price">Rs.<?php echo ($row['productPrice'] + $row['shippingCharge']); ?>*<?php echo $quantity; ?></div>
                                     </div>
                                 </div>
-                            </div><!-- /.cart-item -->
+                            </div>
+                        </li>
                         <?php 
                                     }
                                 }
@@ -126,10 +126,10 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                             </div>
                             <div class="clearfix"></div>
                             <a href="my-cart.php" class="btn btn-upper btn-primary btn-block m-t-20">My Cart</a>    
-                        </div><!-- /.cart-total-->
+                        </div>
                         <?php } ?>
-                    </ul><!-- /.dropdown-menu-->
-                </div><!-- /.dropdown-cart -->
+                    </ul>
+                </div>
                 <?php } else { ?>
                 <div class="dropdown dropdown-cart">
                     <a href="#" class="dropdown-toggle lnk-cart" data-toggle="dropdown">
@@ -148,18 +148,17 @@ if (isset($_GET['action']) && isset($_POST['quantity'])) {
                                         Your Shopping Cart is Empty.
                                     </div>
                                 </div>
-                            </div><!-- /.cart-item -->
+                            </div>
                             <hr>
                             <div class="clearfix cart-total">
                                 <div class="clearfix"></div>
                                 <a href="index.php" class="btn btn-upper btn-primary btn-block m-t-20">Continue Shopping</a>    
-                            </div><!-- /.cart-total-->
+                            </div>
                         </li>
-                    </ul><!-- /.dropdown-menu-->
+                    </ul>
                 </div>
                 <?php } ?>
-                <!-- ============================================================= SHOPPING CART DROPDOWN : END============================================================= -->
-            </div><!-- /.top-cart-row -->
-        </div><!-- /.row -->
-    </div><!-- /.container -->
+            </div>
+        </div>
+    </div>
 </div>
